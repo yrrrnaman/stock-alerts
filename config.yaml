@@ -1,0 +1,157 @@
+# Stock Alert Bot Configuration
+# Copy to config.local.yaml and fill in your secrets
+
+# Telegram Bot Configuration
+telegram:
+  bot_token: ""          # Get from @BotFather
+  chat_id: ""            # Your chat ID (get from @userinfobot)
+  parse_mode: "HTML"     # HTML or MarkdownV2
+
+# Data Source Configuration
+data:
+  provider: "yfinance"   # yfinance (free, delayed 15-20min) or "kite" (Zerodha Kite Connect)
+  cache_dir: "data/cache"
+  cache_ttl_seconds: 300  # Cache for 5 minutes
+
+# Symbols to watch (NSE format for yfinance: SYMBOL.NS)
+symbols:
+  symbols:
+    - "RELIANCE.NS"
+    - "TCS.NS"
+    - "INFY.NS"
+    - "HDFCBANK.NS"
+    - "ICICIBANK.NS"
+    - "^NSEI"              # Nifty 50 index
+    - "^NSEBANK"           # Bank Nifty index
+  timeframes:
+    - "15m"
+    - "1h"
+    - "1d"
+  lookback_periods:
+    "15m": 100
+    "1h": 200
+    "1d": 500
+
+# Pattern Configuration
+patterns:
+  # Built-in candlestick patterns (using TA-Lib or pandas-ta)
+  candlestick:
+    enabled: true
+    patterns:
+      - "hammer"
+      - "inverted_hammer"
+      - "doji"
+      - "bullish_engulfing"
+      - "bearish_engulfing"
+      - "morning_star"
+      - "evening_star"
+      - "shooting_star"
+      - "hanging_man"
+      - "piercing_line"
+      - "dark_cloud_cover"
+      - "harami_bullish"
+      - "harami_bearish"
+      - "three_white_soldiers"
+      - "three_black_crows"
+
+  # Technical indicator conditions
+  indicators:
+    enabled: true
+    rsi:
+      enabled: true
+      period: 14
+      oversold: 30
+      overbought: 70
+    macd:
+      enabled: true
+      fast: 12
+      slow: 26
+      signal: 9
+    ema:
+      enabled: true
+      periods: [9, 20, 50, 200]
+    sma:
+      enabled: true
+      periods: [20, 50, 200]
+    bollinger:
+      enabled: true
+      period: 20
+      std_dev: 2
+
+  # Combined strategies (pattern + indicator conditions)
+  strategies:
+    - name: "bullish_reversal"
+      description: "Hammer + RSI oversold near support"
+      timeframes: ["15m", "1h"]
+      conditions:
+        - pattern: "hammer"
+        - indicator: "rsi"
+          condition: "lt"
+          value: 35
+        - indicator: "price_vs_ema20"
+          condition: "near"  # within 1% of EMA20
+          tolerance_pct: 1.0
+
+    - name: "bullish_engulfing_trend"
+      description: "Bullish engulfing above EMA20"
+      timeframes: ["15m", "1h", "1d"]
+      conditions:
+        - pattern: "bullish_engulfing"
+        - indicator: "price_vs_ema20"
+          condition: "gt"
+
+    - name: "morning_star_reversal"
+      description: "Morning star pattern with volume confirmation"
+      timeframes: ["1h", "1d"]
+      conditions:
+        - pattern: "morning_star"
+        - indicator: "volume_spike"
+          condition: "gt"
+          multiplier: 1.5
+
+    - name: "bearish_reversal_top"
+      description: "Shooting star / evening star at resistance"
+      timeframes: ["15m", "1h", "1d"]
+      conditions:
+        - pattern: ["shooting_star", "evening_star"]
+        - indicator: "rsi"
+          condition: "gt"
+          value: 65
+
+    - name: "breakout_volume"
+      description: "Price breaks above 20-day high with volume spike"
+      timeframes: ["1h", "1d"]
+      conditions:
+        - indicator: "breakout_20d_high"
+        - indicator: "volume_spike"
+          condition: "gt"
+          multiplier: 2.0
+
+# Alert Configuration
+alerts:
+  cooldown_minutes: 15          # Don't re-alert same symbol+pattern within this window
+  max_alerts_per_run: 20        # Rate limit per check cycle
+  include_chart: true           # Generate chart image (requires matplotlib)
+  chart_lookback: 50            # Candles to show in chart
+  message_template: |
+    <b>🚨 {signal_type} Alert</b>
+    <b>Symbol:</b> {symbol}
+    <b>Timeframe:</b> {timeframe}
+    <b>Pattern:</b> {pattern}
+    <b>Price:</b> ₹{price:.2f}
+    <b>Time:</b> {timestamp}
+    {extra_info}
+
+# Scheduler Configuration
+scheduler:
+  enabled: true
+  interval_minutes: 15          # How often to check (respect API limits)
+  run_on_start: true
+  timezone: "Asia/Kolkata"
+
+# Logging
+logging:
+  level: "INFO"
+  file: "logs/stock_alerts.log"
+  rotation: "10 MB"
+  retention: "1 week"

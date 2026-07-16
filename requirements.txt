@@ -1,0 +1,33 @@
+# Stock Alert Bot - Python Dependencies
+# Core
+yfinance>=0.2.40
+pandas>=2.1.0
+numpy>=1.24.0
+pandas-ta>=0.3.14b0
+ta-lib>=0.4.28
+
+# Config & Utils
+pyyaml>=6.0
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+
+# Telegram
+python-telegram-bot>=20.7
+
+# Scheduling
+apscheduler>=3.10.0
+
+# Plotting (for charts)
+matplotlib>=3.8.0
+mplfinance>=0.12.10
+
+# Logging
+loguru>=0.7.0
+
+# Optional: Zerodha Kite Connect (for live data)
+# kiteconnect>=4.0.0
+
+# Development
+pytest>=7.4.0
+black>=23.0.0
+ruff>=0.1.0

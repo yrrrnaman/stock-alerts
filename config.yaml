@@ -9,9 +9,29 @@ telegram:
 
 # Data Source Configuration
 data:
-  provider: "yfinance"   # yfinance (free, delayed 15-20min) or "kite" (Zerodha Kite Connect)
+  provider: "yfinance"   # yfinance (free, delayed 15-20min), "kite", "fyers", "upstox", "mock"
   cache_dir: "data/cache"
   cache_ttl_seconds: 300  # Cache for 5 minutes
+
+# Real-time Data Provider Configuration
+realtime:
+  enabled: false          # Set true to enable real-time streaming
+  provider: "mock"        # kite, fyers, upstox, mock
+  # Zerodha Kite Connect
+  kite:
+    api_key: ""
+    access_token: ""
+  # Fyers
+  fyers:
+    client_id: ""
+    access_token: ""
+  # Upstox
+  upstox:
+    access_token: ""
+  # Symbols to stream (subset of main symbols)
+  symbols: []
+  # Mode: ltp, quote, full
+  mode: "full"
 
 # Symbols to watch (NSE format for yfinance: SYMBOL.NS)
 symbols:

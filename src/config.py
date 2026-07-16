@@ -22,6 +22,17 @@ class DataConfig(BaseModel):
     cache_ttl_seconds: int = 300
 
 
+class RealtimeConfig(BaseModel):
+    enabled: bool = False
+    provider: str = "mock"  # kite, fyers, upstox, angel, mock
+    kite: Dict[str, Any] = Field(default_factory=dict)
+    fyers: Dict[str, Any] = Field(default_factory=dict)
+    upstox: Dict[str, Any] = Field(default_factory=dict)
+    angel: Dict[str, Any] = Field(default_factory=dict)
+    symbols: List[str] = Field(default_factory=list)
+    mode: str = "full"
+
+
 class SymbolsConfig(BaseModel):
     symbols: List[str] = Field(default_factory=list)
     timeframes: List[str] = Field(default_factory=lambda: ["15m", "1h", "1d"])
@@ -113,6 +124,7 @@ class ChartsConfig(BaseModel):
 class Config(BaseModel):
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
     data: DataConfig = Field(default_factory=DataConfig)
+    realtime: RealtimeConfig = Field(default_factory=RealtimeConfig)
     symbols: SymbolsConfig = Field(default_factory=SymbolsConfig)
     patterns: PatternsConfig = Field(default_factory=PatternsConfig)
     alerts: AlertsConfig = Field(default_factory=AlertsConfig)

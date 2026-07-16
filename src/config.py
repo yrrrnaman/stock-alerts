@@ -107,6 +107,7 @@ class ChartsConfig(BaseModel):
     figsize: tuple = (12, 8)
     dpi: int = 100
     output_dir: str = "data/charts"
+    candles: int = 50
 
 
 class Config(BaseModel):

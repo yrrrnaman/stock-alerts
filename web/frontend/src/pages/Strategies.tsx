@@ -29,6 +29,7 @@ const indicators = [
 ];
 
 const mockStrategies: Strategy[] = [
+  // Candlestick patterns
   {
     id: '1',
     name: 'bullish_reversal',
@@ -83,6 +84,143 @@ const mockStrategies: Strategy[] = [
     conditions: [
       { type: 'indicator', indicator: 'breakout_20d_high', operator: 'eq', value: 1 },
       { type: 'indicator', indicator: 'volume_spike', operator: 'gt', value: 2.0 },
+    ],
+  },
+
+  // Momentum strategies
+  {
+    id: '6',
+    name: 'momentum_breakout',
+    description: 'Momentum: RSI > 60 + MACD bullish cross + above 50 EMA',
+    timeframes: ['15m', '1h', '1d'],
+    enabled: true,
+    conditions: [
+      { type: 'indicator', indicator: 'rsi', operator: 'gt', value: 60 },
+      { type: 'indicator', indicator: 'macd', operator: 'bullish_cross' },
+      { type: 'indicator', indicator: 'price_vs_ema50', operator: 'gt', value: 0 },
+      { type: 'indicator', indicator: 'volume_spike', operator: 'gt', value: 1.3 },
+    ],
+  },
+  {
+    id: '7',
+    name: 'supertrend_follower',
+    description: 'Trend-following via Supertrend flip + ADX confirmation',
+    timeframes: ['1h', '1d'],
+    enabled: true,
+    conditions: [
+      { type: 'indicator', indicator: 'supertrend', operator: 'flip_bullish' },
+      { type: 'indicator', indicator: 'adx', operator: 'gt', value: 25 },
+    ],
+  },
+  {
+    id: '8',
+    name: 'vwap_reclaim',
+    description: 'Intraday: Price reclaims VWAP with volume surge',
+    timeframes: ['5m', '15m'],
+    enabled: true,
+    conditions: [
+      { type: 'indicator', indicator: 'price_vs_vwap', operator: 'cross_above' },
+      { type: 'indicator', indicator: 'volume_spike', operator: 'gt', value: 1.5 },
+    ],
+  },
+
+  // Mean reversion strategies
+  {
+    id: '9',
+    name: 'mean_reversion_scalper',
+    description: 'RSI < 25 oversold bounce with Bollinger touch',
+    timeframes: ['5m', '15m'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'rsi', operator: 'lt', value: 25 },
+      { type: 'indicator', indicator: 'bollinger_position', operator: 'lt', value: 5 },
+      { type: 'pattern', pattern: 'hammer' },
+    ],
+  },
+  {
+    id: '10',
+    name: 'bollinger_squeeze_breakout',
+    description: 'Volatility contraction → expansion breakout',
+    timeframes: ['1h', '1d'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'bollinger_width', operator: 'lt', value: 2 },
+      { type: 'indicator', indicator: 'volume_spike', operator: 'gt', value: 2.0 },
+      { type: 'pattern', pattern: 'bullish_engulfing' },
+    ],
+  },
+
+  // Value / Dividend / Growth
+  {
+    id: '11',
+    name: 'value_dividend_payout',
+    description: 'High dividend yield + low P/E + healthy payout',
+    timeframes: ['1d', '1w'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'dividend_yield', operator: 'gt', value: 3.5 },
+      { type: 'indicator', indicator: 'pe_ratio', operator: 'lt', value: 20 },
+      { type: 'indicator', indicator: 'payout_ratio', operator: 'lt', value: 60 },
+    ],
+  },
+  {
+    id: '12',
+    name: 'growth_momentum',
+    description: 'Revenue + earnings growth above 20% YoY',
+    timeframes: ['1d'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'revenue_growth_yoy', operator: 'gt', value: 20 },
+      { type: 'indicator', indicator: 'earnings_growth_yoy', operator: 'gt', value: 20 },
+      { type: 'indicator', indicator: 'rsi', operator: 'gt', value: 55 },
+    ],
+  },
+  {
+    id: '13',
+    name: 'value_buy_dip',
+    description: 'P/B < 1.5 + price near 200 SMA + hammer reversal',
+    timeframes: ['1d', '1w'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'pb_ratio', operator: 'lt', value: 1.5 },
+      { type: 'indicator', indicator: 'price_vs_sma200', operator: 'near', value: 0, tolerance: 3 },
+      { type: 'pattern', pattern: 'hammer' },
+    ],
+  },
+
+  // Options strategies
+  {
+    id: '14',
+    name: 'options_oi_buildup',
+    description: 'Long buildup: Call OI up + price up + volume up',
+    timeframes: ['15m', '1h'],
+    enabled: true,
+    conditions: [
+      { type: 'indicator', indicator: 'call_oi_change', operator: 'gt', value: 10000 },
+      { type: 'indicator', indicator: 'price_change', operator: 'gt', value: 0.5 },
+      { type: 'indicator', indicator: 'volume_spike', operator: 'gt', value: 1.5 },
+    ],
+  },
+  {
+    id: '15',
+    name: 'options_pcr_extreme',
+    description: 'PCR > 1.3 suggests put writing (bullish)',
+    timeframes: ['15m', '1h'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'pcr', operator: 'gt', value: 1.3 },
+      { type: 'indicator', indicator: 'india_vix', operator: 'lt', value: 16 },
+    ],
+  },
+  {
+    id: '16',
+    name: 'options_max_pain',
+    description: 'Price gravitating towards max pain on expiry day',
+    timeframes: ['15m', '1h'],
+    enabled: false,
+    conditions: [
+      { type: 'indicator', indicator: 'distance_from_max_pain', operator: 'lt', value: 0.5 },
+      { type: 'indicator', indicator: 'days_to_expiry', operator: 'lt', value: 1 },
     ],
   },
 ];

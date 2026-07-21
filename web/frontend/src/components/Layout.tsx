@@ -1,17 +1,22 @@
 import {
   LayoutDashboard, BarChart2, ListChecks, Zap, Settings, ChevronLeft, ChevronRight,
-  Menu, X, Moon, Sun, Monitor, Sparkles, LineChart
+  Menu, X, Moon, Sun, Monitor, Sparkles, LineChart, Briefcase, Newspaper, CalendarDays, ScanSearch
 } from 'lucide-react';
+import BottomNav from './BottomNav';
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/symbols', label: 'Symbols', icon: BarChart2 },
+  { path: '/trades', label: 'Trades', icon: Briefcase },
   { path: '/strategies', label: 'Strategies', icon: Zap },
+  { path: '/scanner', label: 'Scanner', icon: ScanSearch },
   { path: '/alerts', label: 'Alerts', icon: ListChecks },
   { path: '/tools', label: 'Tools', icon: Sparkles },
   { path: '/analysis', label: 'Analysis', icon: LineChart },
+  { path: '/calendar', label: 'Calendar', icon: CalendarDays },
+  { path: '/news', label: 'News', icon: Newspaper },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -124,6 +129,7 @@ export default function Layout() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+      <BottomNav />
     </div>
   );
 }

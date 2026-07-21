@@ -7,6 +7,11 @@ import Strategies from './pages/Strategies';
 import Alerts from './pages/Alerts';
 import { Tools } from './pages/Tools';
 import Analysis from './pages/Analysis';
+import Trades from './pages/Trades';
+import Scanner from './pages/Scanner';
+import Calendar from './pages/Calendar';
+import News from './pages/News';
+import StrategyApply from './pages/StrategyApply';
 import Settings from './pages/Settings';
 import './index.css';
 
@@ -44,6 +49,11 @@ function App() {
           <Route path="alerts" element={<Alerts />} />
           <Route path="tools" element={<Tools />} />
           <Route path="analysis" element={<Analysis />} />
+          <Route path="trades" element={<Trades />} />
+          <Route path="scanner" element={<Scanner />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="news" element={<News />} />
+          <Route path="strategies/:id/apply" element={<StrategyApply />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

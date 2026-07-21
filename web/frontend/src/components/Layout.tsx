@@ -39,7 +39,10 @@ export default function Layout() {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    document.documentElement.classList.toggle('dark', theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches));
+    const root = document.documentElement;
+    const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.classList.toggle('dark', isDark);
+    root.style.colorScheme = isDark ? 'dark' : 'light';
   }, [theme]);
 
   const toggleTheme = () => {
@@ -49,21 +52,21 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 dark">
+    <div className="min-h-screen bg-light-50 dark:bg-dark-950 transition-colors duration-200">
       <aside
-        className={`fixed left-0 top-0 z-50 h-screen bg-dark-900/95 border-r border-dark-700 backdrop-blur-sm transition-all duration-300 ${
+        className={`fixed left-0 top-0 z-50 h-screen bg-white dark:bg-dark-900/95 border-r border-light-300 dark:border-dark-700 backdrop-blur-sm transition-all duration-300 ${
           collapsed ? 'w-20' : 'w-64'
         } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         <div className="flex h-full flex-col">
-          <div className="flex h-16 items-center justify-between px-4 border-b border-dark-700">
+          <div className="flex h-16 items-center justify-between px-4 border-b border-light-300 dark:border-dark-700">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-500/20 rounded-lg text-primary-400">
+              <div className="p-2 bg-primary-500/20 rounded-lg text-primary-500 dark:text-primary-400">
                 <Zap size={20} />
               </div>
-              {!collapsed && <span className="font-bold text-dark-50 text-lg">StockAlerts</span>}
+              {!collapsed && <span className="font-bold text-light-900 dark:text-dark-50 text-lg">StockAlerts</span>}
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded hover:bg-dark-800 text-dark-400">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded hover:bg-light-200 dark:hover:bg-dark-800 text-light-500 dark:text-dark-400">
               <X size={20} />
             </button>
           </div>
@@ -73,10 +76,10 @@ export default function Layout() {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150 ${
                     isActive
-                      ? 'bg-primary-500/10 text-primary-400'
-                      : 'text-dark-400 hover:bg-dark-800 hover:text-dark-100'
+                      ? 'bg-primary-500/10 text-primary-500 dark:text-primary-400 font-semibold'
+                      : 'text-light-600 dark:text-dark-400 hover:bg-light-200 dark:hover:bg-dark-800 hover:text-light-900 dark:hover:text-dark-100'
                   } ${collapsed ? 'justify-center' : ''}`
                 }
                 title={collapsed ? item.label : undefined}
@@ -86,18 +89,18 @@ export default function Layout() {
               </NavLink>
             ))}
           </nav>
-          <div className="p-4 border-t border-dark-700">
+          <div className="p-4 border-t border-light-300 dark:border-dark-700">
             <div className="flex items-center justify-between">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-dark-100 transition-colors"
+                className="p-2 rounded-lg hover:bg-light-200 dark:hover:bg-dark-800 text-light-500 dark:text-dark-400 hover:text-light-900 dark:hover:text-dark-100 transition-colors"
                 title={`Theme: ${theme}`}
               >
                 {theme === 'dark' ? <Moon size={20} /> : theme === 'light' ? <Sun size={20} /> : <Monitor size={20} />}
               </button>
               <button
                 onClick={() => setCollapsed(!collapsed)}
-                className="p-2 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-dark-100 transition-colors"
+                className="p-2 rounded-lg hover:bg-light-200 dark:hover:bg-dark-800 text-light-500 dark:text-dark-400 hover:text-light-900 dark:hover:text-dark-100 transition-colors"
               >
                 {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
               </button>
@@ -106,14 +109,14 @@ export default function Layout() {
         </div>
       </aside>
       <div className={`lg:ml-64 transition-all duration-300 ${collapsed ? 'lg:ml-20' : ''}`}>
-        <header className="sticky top-0 z-40 h-16 bg-dark-900/80 backdrop-blur-sm border-b border-dark-700">
+        <header className="sticky top-0 z-40 h-16 bg-white/80 dark:bg-dark-900/80 backdrop-blur-sm border-b border-light-300 dark:border-dark-700">
           <div className="flex h-full items-center justify-between px-4 lg:px-6">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded hover:bg-dark-800 text-dark-400">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded hover:bg-light-200 dark:hover:bg-dark-800 text-light-500 dark:text-dark-400">
               <Menu size={24} />
             </button>
             <div className="flex-1 lg:flex-none" />
             <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-dark-800/50 rounded-lg border border-dark-700 text-sm text-dark-400">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-light-100 dark:bg-dark-800/50 rounded-lg border border-light-300 dark:border-dark-700 text-sm text-light-600 dark:text-dark-400">
                 <span id="clock" className="font-mono tabular-nums"></span>
               </div>
             </div>

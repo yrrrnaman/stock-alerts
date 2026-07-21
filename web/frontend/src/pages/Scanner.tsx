@@ -140,7 +140,7 @@ export default function Scanner() {
           <button onClick={() => setScanning(s => !s)} className={`btn-${scanning ? 'danger' : 'primary'} gap-2`}>
             {scanning ? <><Pause size={18} /> Pause</> : <><Play size={18} /> Resume</>}
           </button>
-          <button onClick={() => { setLastScan(new Date()); toast.success('Scan refresh triggered'); }} className="btn-secondary gap-2">
+          <button onClick={() => { setResults(prev => prev.map(r => ({ ...r, price: parseFloat((r.price * (0.998 + Math.random() * 0.004)).toFixed(2)), change: parseFloat((r.change + (Math.random() - 0.5) * 2).toFixed(2)), timestamp: new Date().toLocaleTimeString().slice(0, 5) }))); setLastScan(new Date()); toast.success('Scan refreshed — prices updated'); }} className="btn-secondary gap-2">
             <RefreshCw size={18} /> Scan Now
           </button>
         </div>

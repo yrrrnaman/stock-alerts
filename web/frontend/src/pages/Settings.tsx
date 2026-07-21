@@ -1,4 +1,4 @@
-import { Bell, Moon, Sun, Monitor, Shield, Key, Database, Wifi, Terminal, Globe, Palette, Clock, Trash2, Save, TestTube, ToggleLeft, ToggleRight, AlertTriangle, CheckCircle, XCircle, WifiOff, Info, Plus, ChevronDown, ChevronUp, Zap, Target, BarChart2, Download, RefreshCw, Share2, BellRing, BellOff, SlidersHorizontal, GitMerge, Code2, Braces, FunctionSquare, Link2, Unlink2, Eye, EyeOff, RotateCcw, RotateCw, Flag, FlagOff, Bookmark, BookmarkPlus, Archive, ArchiveRestore, Settings, Search, Upload, Cloud, Server, Cpu, HardDrive, LayoutDashboard, Key as KeyIcon, KeyRound, Fingerprint, ScanEye, ScanFace, ScanLine, ScanSearch, ScanText, Barcode, QrCode, Ticket, TicketCheck, TicketMinus, TicketPlus, TicketX, TicketPercent, Clipboard, ClipboardCheck, ClipboardCopy, ClipboardList, ClipboardMinus, ClipboardPlus, ClipboardX, ClipboardType, File, FileCheck, FileCog, FileDown, FileInput, FileMinus, FileOutput, FilePlus, FileSearch, FileText as FileTextIcon, FileUp, FileX, FileQuestion, FileWarning, FileKey, FileLock, FilePen, FileCode, FileJson, Files, FileSpreadsheet, FileAudio, FileVideo, FileImage, FileArchive, FileSymlink, FileBadge, FileTerminal, FileStack, Folder, FolderCheck, FolderClock, FolderClosed, FolderCode, FolderCog, FolderDot, FolderDown, FolderGit, FolderHeart, FolderInput, FolderKanban, FolderLock, FolderMinus, FolderOpen, FolderOutput, FolderPen, FolderPlus as FolderPlusIcon, FolderRoot, FolderSearch, FolderSync, FolderTree, FolderUp, FolderX, Mail as MailIcon, MailCheck, MailMinus, MailOpen, MailPlus, MailQuestion, MailSearch, MailWarning, MailX, MessageSquare, MessageCircle, Sparkles as SparklesIcon, Flame, Bolt, Cloud as CloudIcon, CloudLightning, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudHail, CloudSun, CloudMoon, Star, StarHalf, Award, Trophy, Medal, Ribbon, Crown, Gem, Diamond, Heart, HeartHandshake, Handshake, Users, User, UserPlus, UserMinus, UserCheck, UserX, UserCog, Shield as ShieldIcon, ShieldCheck, ShieldX, ShieldAlert, ShieldOff, Lock, LockOpen, MoreVertical, Activity, Edit, X, Send } from 'lucide-react';
+import { Bell, Moon, Sun, Monitor, Shield, Key, Database, Wifi, Terminal, Globe, Palette, Clock, Trash2, Save, TestTube, ToggleLeft, ToggleRight, AlertTriangle, CheckCircle, XCircle, WifiOff, Info, Plus, ChevronDown, ChevronUp, Zap, Target, BarChart2, Download, RefreshCw, Share2, BellRing, BellOff, SlidersHorizontal, GitMerge, Code2, Braces, FunctionSquare, Link2, Unlink2, Eye, EyeOff, RotateCcw, RotateCw, Flag, FlagOff, Bookmark, BookmarkPlus, Archive, ArchiveRestore, Settings, Search, Upload, Cloud, Server, Cpu, HardDrive, LayoutDashboard, Key as KeyIcon, KeyRound, Fingerprint, ScanEye, ScanFace, ScanLine, ScanSearch, ScanText, Barcode, QrCode, Ticket, TicketCheck, TicketMinus, TicketPlus, TicketX, TicketPercent, Clipboard, ClipboardCheck, ClipboardCopy, ClipboardList, ClipboardMinus, ClipboardPlus, ClipboardX, ClipboardType, File, FileCheck, FileCog, FileDown, FileInput, FileMinus, FileOutput, FilePlus, FileSearch, FileText as FileTextIcon, FileUp, FileX, FileQuestion, FileWarning, FileKey, FileLock, FilePen, FileCode, FileJson, Files, FileSpreadsheet, FileAudio, FileVideo, FileImage, FileArchive, FileSymlink, FileBadge, FileTerminal, FileStack, Folder, FolderCheck, FolderClock, FolderClosed, FolderCode, FolderCog, FolderDot, FolderDown, FolderGit, FolderHeart, FolderInput, FolderKanban, FolderLock, FolderMinus, FolderOpen, FolderOutput, FolderPen, FolderPlus as FolderPlusIcon, FolderRoot, FolderSearch, FolderSync, FolderTree, FolderUp, FolderX, Mail as MailIcon, MailCheck, MailMinus, MailOpen, MailPlus, MailQuestion, MailSearch, MailWarning, MailX, MessageSquare, MessageCircle, Sparkles as SparklesIcon, Flame, Bolt, Cloud as CloudIcon, CloudLightning, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudHail, CloudSun, CloudMoon, Star, StarHalf, Award, Trophy, Medal, Ribbon, Crown, Gem, Diamond, Heart, HeartHandshake, Handshake, Users, User, UserPlus, UserMinus, UserCheck, UserX, UserCog, Shield as ShieldIcon, ShieldCheck, ShieldX, ShieldAlert, ShieldOff, Lock, LockOpen, MoreVertical, Activity, Edit, X, Send, Mail, CreditCard, Receipt, AlertOctagon, Calendar, Type as TypeIcon, LineChart, Volume2, History as HistoryIcon, ShieldAlert as ShieldAlertIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
@@ -143,9 +143,43 @@ const activityLog: ActivityEntry[] = [
   { id: '5', user: 'Naman Sharma', action: 'invited', target: 'sneha@stockalert.io as Trader', type: 'invite', time: '2 days ago' },
 ];
 
+const sessions = [
+  { id: 's1', device: 'MacBook Pro 16"', browser: 'Chrome 124', os: 'macOS Sonoma', location: 'Bengaluru, IN', ip: '103.21.58.x', current: true, lastActive: 'Active now' },
+  { id: 's2', device: 'iPhone 15 Pro', browser: 'Safari Mobile', os: 'iOS 17.4', location: 'Bengaluru, IN', ip: '103.21.58.x', current: false, lastActive: '2 hours ago' },
+  { id: 's3', device: 'Trading Rig', browser: 'Firefox 125', os: 'Ubuntu 24.04', location: 'Mumbai, IN', ip: '49.36.112.x', current: false, lastActive: 'Yesterday' },
+  { id: 's4', device: 'iPad Air', browser: 'Safari', os: 'iPadOS 17', location: 'Bengaluru, IN', ip: '103.21.58.x', current: false, lastActive: '4 days ago' },
+];
+
+const invoices = [
+  { id: 'inv-2026-07', date: '21 Jul 2026', amount: '₹4,999', plan: 'Pro Monthly', status: 'paid' },
+  { id: 'inv-2026-06', date: '21 Jun 2026', amount: '₹4,999', plan: 'Pro Monthly', status: 'paid' },
+  { id: 'inv-2026-05', date: '21 May 2026', amount: '₹4,999', plan: 'Pro Monthly', status: 'paid' },
+  { id: 'inv-2026-04', date: '21 Apr 2026', amount: '₹49,999', plan: 'Pro Annual (renewed)', status: 'paid' },
+];
+
+const indianMarketHolidays2026 = [
+  { date: '26 Jan 2026', name: 'Republic Day', exchange: 'NSE/BSE' },
+  { date: '03 Mar 2026', name: 'Holi', exchange: 'NSE/BSE' },
+  { date: '14 Apr 2026', name: 'Dr. Ambedkar Jayanti', exchange: 'NSE/BSE' },
+  { date: '01 May 2026', name: 'Maharashtra Day', exchange: 'BSE' },
+  { date: '27 Aug 2026', name: 'Ganesh Chaturthi', exchange: 'NSE/BSE' },
+  { date: '02 Oct 2026', name: 'Gandhi Jayanti', exchange: 'NSE/BSE' },
+  { date: '19 Oct 2026', name: 'Dussehra', exchange: 'NSE/BSE' },
+  { date: '08 Nov 2026', name: 'Diwali (Laxmi Pujan)', exchange: 'NSE/BSE' },
+  { date: '25 Dec 2026', name: 'Christmas', exchange: 'NSE/BSE' },
+];
+
+const chartColorSchemes = [
+  { id: 'classic', name: 'Classic Green/Red', bull: '#22c55e', bear: '#ef4444', vol: '#94a3b8' },
+  { id: 'modern', name: 'Modern Cyan/Pink', bull: '#06b6d4', bear: '#ec4899', vol: '#64748b' },
+  { id: 'professional', name: 'Pro Blue/Orange', bull: '#3b82f6', bear: '#f97316', vol: '#6b7280' },
+  { id: 'monochrome', name: 'Mono White/Red', bull: '#f1f5f9', bear: '#ef4444', vol: '#94a3b8' },
+  { id: 'high-contrast', name: 'High Contrast', bull: '#00ff88', bear: '#ff0066', vol: '#ffffff' },
+];
+
 export default function SettingsPage() {
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>('dark');
-  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations' | 'teams'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations' | 'teams' | 'account' | 'billing' | 'risk' | 'market' | 'display' | 'backup'>('general');
   const [saving, setSaving] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState<{ email: string; role: 'Admin' | 'Trader' | 'Viewer'; message: string }>({ email: '', role: 'Viewer', message: '' });
@@ -374,6 +408,12 @@ export default function SettingsPage() {
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'data', label: 'Data & Cache', icon: Database },
     { id: 'teams', label: 'Teams', icon: Users },
+    { id: 'account', label: 'Account', icon: UserCog },
+    { id: 'billing', label: 'Billing', icon: Ticket },
+    { id: 'risk', label: 'Risk', icon: AlertTriangle },
+    { id: 'market', label: 'Market', icon: Globe },
+    { id: 'display', label: 'Display', icon: Eye },
+    { id: 'backup', label: 'Backup', icon: Archive },
     { id: 'advanced', label: 'Advanced', icon: Terminal },
   ];
 
@@ -1350,6 +1390,426 @@ export default function SettingsPage() {
                     <button onClick={saveIntegration} className="btn-primary gap-2"><Save size={16} /> Save Integration</button>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'account' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><UserCog size={20} /> Profile</h3>
+              <div className="card p-5">
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-2xl font-bold">NS</div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-dark-50">Naman Sharma</h4>
+                    <p className="text-sm text-dark-400">naman@stockalert.io • Member since Jan 2024</p>
+                    <div className="flex gap-2 mt-2">
+                      <span className="badge bg-primary-500/20 text-primary-400">Pro Plan</span>
+                      <span className="badge bg-dark-700 text-dark-300">2FA Enabled</span>
+                    </div>
+                  </div>
+                  <button className="btn-secondary gap-2"><Edit size={16} /> Edit Profile</button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label className="label">Display Name</label><input type="text" className="input" defaultValue="Naman Sharma" /></div>
+                  <div><label className="label">Email</label><input type="email" className="input" defaultValue="naman@stockalert.io" /></div>
+                  <div><label className="label">Phone (+91)</label><input type="tel" className="input" defaultValue="+91 98765 43210" /></div>
+                  <div><label className="label">Time Zone</label><input type="text" className="input" defaultValue="Asia/Kolkata (IST, UTC+5:30)" /></div>
+                  <div><label className="label">Trading Style</label><select className="input"><option>Scalper (1-5 min)</option><option selected>Intraday (15m-1h)</option><option>Swing (1d-1w)</option><option>Positional (1w+)</option><option>Long-term Investor</option></select></div>
+                  <div><label className="label">Primary Broker</label><select className="input"><option>Zerodha Kite</option><option>Upstox</option><option>Angel One</option><option>Fyers</option><option>None (data only)</option></select></div>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Shield size={20} /> Security</h3>
+              <div className="card p-5 space-y-4">
+                <div className="flex items-center justify-between p-3 bg-dark-800/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-green-500/10"><Fingerprint size={20} className="text-green-400" /></div>
+                    <div>
+                      <p className="font-medium text-dark-100">Two-Factor Authentication</p>
+                      <p className="text-xs text-dark-400">Authenticator app — TOTP</p>
+                    </div>
+                  </div>
+                  <span className="badge bg-green-500/20 text-green-400">Enabled</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-dark-800/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-blue-500/10"><KeyRound size={20} className="text-blue-400" /></div>
+                    <div>
+                      <p className="font-medium text-dark-100">Password</p>
+                      <p className="text-xs text-dark-400">Last changed 45 days ago</p>
+                    </div>
+                  </div>
+                  <button className="btn-secondary text-sm">Change</button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-dark-800/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-purple-500/10"><ScanFace size={20} className="text-purple-400" /></div>
+                    <div>
+                      <p className="font-medium text-dark-100">Biometric Login</p>
+                      <p className="text-xs text-dark-400">Face ID / Touch ID on supported devices</p>
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-dark-600 text-primary-500" /></label>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-dark-800/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-orange-500/10"><Mail size={20} className="text-orange-400" /></div>
+                    <div>
+                      <p className="font-medium text-dark-100">Email Notifications for Login</p>
+                      <p className="text-xs text-dark-400">Get alerted on new device sign-ins</p>
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-dark-600 text-primary-500" /></label>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Monitor size={20} /> Active Sessions</h3>
+              <div className="card overflow-hidden">
+                <table className="w-full">
+                  <thead><tr className="text-left text-sm text-dark-400 border-b border-dark-700"><th className="p-4">Device</th><th className="p-4">Location</th><th className="p-4">Last Active</th><th className="p-4 w-12"></th></tr></thead>
+                  <tbody className="divide-y divide-dark-700">
+                    {sessions.map(s => (
+                      <tr key={s.id} className="hover:bg-dark-800/50">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-lg ${s.device.includes('iPhone') || s.device.includes('iPad') ? 'bg-blue-500/10' : s.device.includes('Trading') ? 'bg-orange-500/10' : 'bg-purple-500/10'}`}>
+                              <Monitor size={16} className="text-dark-300" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-dark-100">{s.device} {s.current && <span className="badge bg-green-500/20 text-green-400 text-xs ml-2">This device</span>}</p>
+                              <p className="text-xs text-dark-400">{s.browser} • {s.os}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4 text-sm text-dark-300">{s.location}<br /><span className="text-xs text-dark-500 font-mono">{s.ip}</span></td>
+                        <td className="p-4 text-sm text-dark-400">{s.lastActive}</td>
+                        <td className="p-4">{!s.current && <button className="p-2 rounded hover:bg-red-500/10 text-red-400" title="Revoke"><Trash2 size={14} /></button>}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <button className="btn-danger gap-2"><Trash2 size={16} /> Revoke All Other Sessions</button>
+            </div>
+          )}
+
+          {activeTab === 'billing' && (
+            <div className="space-y-6">
+              <div className="card p-6 bg-gradient-to-br from-primary-500/10 to-accent-500/10 border-primary-500/30">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Trophy size={20} className="text-accent-400" />
+                      <span className="badge bg-accent-500/20 text-accent-400">Pro Plan</span>
+                    </div>
+                    <h3 className="text-3xl font-bold text-dark-50">₹4,999<span className="text-lg text-dark-400 font-normal">/month</span></h3>
+                    <p className="text-sm text-dark-400 mt-1">Renews on 21 Aug 2026 • Auto-renewal ON</p>
+                  </div>
+                  <button className="btn-secondary gap-2"><SparklesIcon size={16} /> Upgrade to Enterprise</button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+                  <div className="p-3 bg-dark-900/50 rounded-lg"><p className="text-2xl font-bold text-dark-50">∞</p><p className="text-xs text-dark-400">Symbols</p></div>
+                  <div className="p-3 bg-dark-900/50 rounded-lg"><p className="text-2xl font-bold text-dark-50">5</p><p className="text-xs text-dark-400">Team seats</p></div>
+                  <div className="p-3 bg-dark-900/50 rounded-lg"><p className="text-2xl font-bold text-dark-50">1m</p><p className="text-xs text-dark-400">Scan interval</p></div>
+                  <div className="p-3 bg-dark-900/50 rounded-lg"><p className="text-2xl font-bold text-dark-50">Live</p><p className="text-xs text-dark-400">Data feed</p></div>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><CreditCard size={20} /> Payment Method</h3>
+              <div className="card p-5 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-10 rounded-md bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-xs font-bold">VISA</div>
+                  <div>
+                    <p className="font-medium text-dark-100">Visa ending in 4242</p>
+                    <p className="text-xs text-dark-400">Expires 09/2027 • Default</p>
+                  </div>
+                </div>
+                <div className="flex gap-2"><button className="btn-secondary text-sm">Edit</button><button className="btn-ghost text-sm">Remove</button></div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg">
+                <label className="flex items-center gap-2 cursor-pointer flex-1"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-dark-600 text-primary-500" /><span className="text-sm text-dark-300">Auto-renew subscription</span></label>
+                <button className="btn-ghost text-sm">Cancel Subscription</button>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Receipt size={20} /> Invoice History</h3>
+              <div className="card overflow-hidden">
+                <table className="w-full">
+                  <thead><tr className="text-left text-sm text-dark-400 border-b border-dark-700"><th className="p-4">Invoice</th><th className="p-4">Date</th><th className="p-4">Plan</th><th className="p-4 text-right">Amount</th><th className="p-4">Status</th><th className="p-4 w-12"></th></tr></thead>
+                  <tbody className="divide-y divide-dark-700">
+                    {invoices.map(inv => (
+                      <tr key={inv.id} className="hover:bg-dark-800/50">
+                        <td className="p-4 font-mono text-sm text-dark-100">{inv.id}</td>
+                        <td className="p-4 text-sm text-dark-300">{inv.date}</td>
+                        <td className="p-4 text-sm text-dark-300">{inv.plan}</td>
+                        <td className="p-4 text-right font-mono text-dark-100">{inv.amount}</td>
+                        <td className="p-4"><span className="badge bg-green-500/20 text-green-400">{inv.status}</span></td>
+                        <td className="p-4"><button className="p-2 rounded hover:bg-dark-700 text-dark-400" title="Download"><Download size={14} /></button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><SparklesIcon size={20} /> Usage This Month</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="card"><div className="flex justify-between text-sm mb-2"><span className="text-dark-300">API Calls</span><span className="font-mono text-dark-100">12,847 / 100K</span></div><div className="w-full h-2 bg-dark-800 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-primary-500 to-accent-500" style={{ width: '12.8%' }} /></div></div>
+                <div className="card"><div className="flex justify-between text-sm mb-2"><span className="text-dark-300">Alerts Sent</span><span className="font-mono text-dark-100">847 / 10K</span></div><div className="w-full h-2 bg-dark-800 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-primary-500 to-accent-500" style={{ width: '8.5%' }} /></div></div>
+                <div className="card"><div className="flex justify-between text-sm mb-2"><span className="text-dark-300">Storage</span><span className="font-mono text-dark-100">2.3 GB / 50 GB</span></div><div className="w-full h-2 bg-dark-800 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-primary-500 to-accent-500" style={{ width: '4.6%' }} /></div></div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'risk' && (
+            <div className="space-y-6">
+              <div className="card p-5 border-red-500/30 bg-gradient-to-br from-red-500/5 to-orange-500/5">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-red-500/10"><ShieldAlertIcon size={24} className="text-red-400" /></div>
+                    <div>
+                      <h3 className="text-lg font-bold text-dark-50">Kill Switch</h3>
+                      <p className="text-sm text-dark-400">Immediately stops all scanning and alert delivery</p>
+                    </div>
+                  </div>
+                  <button className="btn-danger gap-2"><AlertOctagon size={16} /> Activate Kill Switch</button>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Target size={20} /> Position Limits</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div><label className="label">Max Position Size (% of capital)</label><input type="number" min="1" max="100" className="input" defaultValue={5} /><p className="text-xs text-dark-500 mt-1">Per single trade</p></div>
+                <div><label className="label">Max Open Positions</label><input type="number" min="1" max="50" className="input" defaultValue={10} /><p className="text-xs text-dark-500 mt-1">Concurrent holdings</p></div>
+                <div><label className="label">Max Sector Exposure (%)</label><input type="number" min="5" max="100" className="input" defaultValue={25} /><p className="text-xs text-dark-500 mt-1">Single sector</p></div>
+                <div><label className="label">Max Daily Loss (₹)</label><input type="number" className="input" defaultValue={10000} /></div>
+                <div><label className="label">Max Weekly Loss (₹)</label><input type="number" className="input" defaultValue={30000} /></div>
+                <div><label className="label">Max Drawdown (%)</label><input type="number" min="5" max="50" className="input" defaultValue={15} /></div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><SlidersHorizontal size={20} /> Position Sizing</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label className="label">Sizing Method</label><select className="input"><option>Kelly Criterion (½ Kelly)</option><option selected>Fixed Fractional (% of capital)</option><option>Fixed Rupee Amount</option><option>Volatility-adjusted (ATR)</option><option>Risk Parity</option></select></div>
+                <div><label className="label">Risk per Trade (%)</label><input type="number" min="0.1" max="5" step="0.1" className="input" defaultValue={1.0} /></div>
+                <div><label className="label">Default Stop Loss (%)</label><input type="number" min="0.5" max="20" step="0.5" className="input" defaultValue={2.0} /></div>
+                <div><label className="label">Default Take Profit (%)</label><input type="number" min="1" max="50" step="0.5" className="input" defaultValue={4.0} /></div>
+                <div><label className="label">Risk-Reward Ratio</label><select className="input"><option>1:1</option><option selected>1:2</option><option>1:3</option><option>Dynamic</option></select></div>
+                <div><label className="label">Trailing Stop</label><select className="input"><option>Disabled</option><option selected>ATR-based (1.5×)</option><option>% based</option><option>Moving Average</option></select></div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><AlertTriangle size={20} /> Risk Alerts</h3>
+              <div className="space-y-2">
+                {[
+                  { label: 'Alert when position loss exceeds stop loss', defaultChecked: true },
+                  { label: 'Alert when daily P&L hits limit', defaultChecked: true },
+                  { label: 'Alert on correlated positions (>0.7 correlation)', defaultChecked: true },
+                  { label: 'Block new alerts when in drawdown', defaultChecked: false },
+                  { label: 'Auto-reduce position size after 2 consecutive losses', defaultChecked: false },
+                  { label: 'Auto-pause strategy after 5 losing trades', defaultChecked: false },
+                ].map((r, i) => (
+                  <label key={i} className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg cursor-pointer hover:bg-dark-800">
+                    <input type="checkbox" defaultChecked={r.defaultChecked} className="w-4 h-4 rounded border-dark-600 text-primary-500" />
+                    <span className="text-sm text-dark-300">{r.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'market' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Clock size={20} /> Trading Hours</h3>
+              <div className="card p-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-dark-100 mb-3">NSE / BSE Equity</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between p-2 bg-dark-800/50 rounded"><span className="text-dark-300">Pre-open</span><span className="font-mono text-dark-100">09:00 – 09:15</span></div>
+                      <div className="flex justify-between p-2 bg-primary-500/10 rounded border border-primary-500/30"><span className="text-dark-300 font-medium">Regular</span><span className="font-mono text-primary-400 font-bold">09:15 – 15:30</span></div>
+                      <div className="flex justify-between p-2 bg-dark-800/50 rounded"><span className="text-dark-300">Closing</span><span className="font-mono text-dark-100">15:30 – 15:40</span></div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-dark-100 mb-3">NIFTY / BANKNIFTY Options</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between p-2 bg-dark-800/50 rounded"><span className="text-dark-300">Regular</span><span className="font-mono text-dark-100">09:15 – 15:30</span></div>
+                      <div className="flex justify-between p-2 bg-dark-800/50 rounded"><span className="text-dark-300">Expiry (Thu)</span><span className="font-mono text-dark-100">09:15 – 15:30</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 space-y-3">
+                  <label className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-dark-600 text-primary-500" /><div className="flex-1"><p className="text-sm font-medium text-dark-100">Only scan during market hours</p><p className="text-xs text-dark-400">Pause scanner outside 09:15–15:30</p></div></label>
+                  <label className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-dark-600 text-primary-500" /><div className="flex-1"><p className="text-sm font-medium text-dark-100">Skip Indian market holidays</p><p className="text-xs text-dark-400">Auto-pause on NSE/BSE holidays</p></div></label>
+                  <label className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg cursor-pointer"><input type="checkbox" className="w-4 h-4 rounded border-dark-600 text-primary-500" /><div className="flex-1"><p className="text-sm font-medium text-dark-100">Allow pre-market scanning</p><p className="text-xs text-dark-400">Run during 09:00–09:15 pre-open session</p></div></label>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Calendar size={20} /> Indian Market Holidays 2026</h3>
+              <div className="card overflow-hidden">
+                <table className="w-full">
+                  <thead><tr className="text-left text-sm text-dark-400 border-b border-dark-700"><th className="p-3">Date</th><th className="p-3">Holiday</th><th className="p-3">Exchange</th></tr></thead>
+                  <tbody className="divide-y divide-dark-700">
+                    {indianMarketHolidays2026.map((h, i) => (
+                      <tr key={i} className="hover:bg-dark-800/50"><td className="p-3 font-mono text-sm text-dark-100">{h.date}</td><td className="p-3 text-sm text-dark-300">{h.name}</td><td className="p-3"><span className="badge bg-dark-700 text-dark-300 text-xs">{h.exchange}</span></td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'display' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Palette size={20} /> Theme & Colors</h3>
+              <div className="card p-5 space-y-4">
+                <div>
+                  <label className="label">Theme Mode</label>
+                  <div className="flex gap-2">
+                    {['dark', 'light', 'system'].map(t => (
+                      <button key={t} onClick={() => setTheme(t as any)} className={`flex-1 p-3 rounded-lg border-2 transition-all ${theme === t ? 'border-primary-500 bg-primary-500/10' : 'border-dark-600 hover:border-dark-500'}`}>
+                        {t === 'dark' ? <Moon size={20} className="mx-auto mb-1" /> : t === 'light' ? <Sun size={20} className="mx-auto mb-1" /> : <Monitor size={20} className="mx-auto mb-1" />}
+                        <span className="block text-center text-sm capitalize">{t}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="label">Chart Color Scheme</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {chartColorSchemes.map(c => (
+                      <button key={c.id} className="p-4 bg-dark-800/50 hover:bg-dark-800 border-2 border-dark-700 hover:border-primary-500/50 rounded-lg text-left transition-all">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded" style={{ background: c.bull }} />
+                          <div className="w-6 h-6 rounded" style={{ background: c.bear }} />
+                          <div className="w-6 h-6 rounded" style={{ background: c.vol }} />
+                        </div>
+                        <p className="text-sm font-medium text-dark-100">{c.name}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="label">Accent Color</label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { name: 'Green', hex: '#22c55e' },
+                      { name: 'Blue', hex: '#3b82f6' },
+                      { name: 'Purple', hex: '#8b5cf6' },
+                      { name: 'Pink', hex: '#ec4899' },
+                      { name: 'Orange', hex: '#f97316' },
+                      { name: 'Cyan', hex: '#06b6d4' },
+                    ].map(c => (
+                      <button key={c.name} className="flex items-center gap-2 px-3 py-2 bg-dark-800 hover:bg-dark-700 rounded-lg border border-dark-700 hover:border-dark-600">
+                        <div className="w-5 h-5 rounded-full" style={{ background: c.hex }} />
+                        <span className="text-sm text-dark-200">{c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><TypeIcon size={20} /> Typography & Density</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div><label className="label">Font Family</label><select className="input"><option selected>Inter</option><option>System Default</option><option>Roboto</option><option>JetBrains Mono</option></select></div>
+                <div><label className="label">Font Size</label><select className="input"><option>Small</option><option selected>Medium</option><option>Large</option><option>Extra Large</option></select></div>
+                <div><label className="label">UI Density</label><select className="input"><option>Compact</option><option selected>Comfortable</option><option>Spacious</option></select></div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><LineChart size={20} /> Chart Defaults</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div><label className="label">Default Timeframe</label><select className="input"><option>1m</option><option>5m</option><option selected>15m</option><option>1h</option><option>1d</option></select></div>
+                <div><label className="label">Candle Type</label><select className="input"><option selected>Heikin Ashi</option><option>Regular</option></select></div>
+                <div><label className="label">Show Volume</label><select className="input"><option selected>Yes (always)</option><option>Only on hover</option><option>No</option></select></div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Volume2 size={20} /> Sound & Alerts</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label className="label">Alert Sound</label><select className="input"><option selected>Chime</option><option>Bell</option><option>Cash Register</option><option>None</option></select></div>
+                <div><label className="label">Sound Volume</label><input type="range" min="0" max="100" defaultValue={60} className="w-full" /></div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Eye size={20} /> Accessibility</h3>
+              <div className="space-y-2">
+                {[
+                  'Reduce motion (disable animations)',
+                  'High contrast mode',
+                  'Color blind friendly palette',
+                  'Screen reader optimizations',
+                  'Keyboard navigation hints',
+                ].map((label, i) => (
+                  <label key={i} className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg cursor-pointer hover:bg-dark-800"><input type="checkbox" className="w-4 h-4 rounded border-dark-600 text-primary-500" /><span className="text-sm text-dark-300">{label}</span></label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'backup' && (
+            <div className="space-y-6">
+              <div className="card p-6 border-primary-500/30 bg-gradient-to-br from-primary-500/5 to-accent-500/5">
+                <div className="flex items-start gap-3">
+                  <div className="p-3 rounded-xl bg-primary-500/10"><Download size={24} className="text-primary-400" /></div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-dark-50">Export Configuration</h3>
+                    <p className="text-sm text-dark-400 mt-1">Download all your settings, strategies, symbols, and custom integrations as a single JSON file. Use it to backup or move to another account.</p>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      <button onClick={() => toast.success('Full config exported (42 KB)')} className="btn-primary gap-2"><Download size={16} /> Export Full Config</button>
+                      <button className="btn-secondary gap-2"><FileJson size={16} /> Strategies Only</button>
+                      <button className="btn-secondary gap-2"><FileSpreadsheet size={16} /> Symbols & Watchlist</button>
+                      <button className="btn-secondary gap-2"><Send size={16} /> Custom Integrations Only</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card p-5">
+                <h4 className="font-semibold text-dark-100 mb-3 flex items-center gap-2"><Upload size={20} /> Import Configuration</h4>
+                <div className="border-2 border-dashed border-dark-700 rounded-xl p-8 text-center hover:border-primary-500/50 transition-colors">
+                  <Upload size={36} className="mx-auto mb-3 text-dark-500" />
+                  <p className="text-sm font-medium text-dark-100">Drop a config JSON file here</p>
+                  <p className="text-xs text-dark-500 mt-1">or click to browse</p>
+                  <input type="file" accept=".json" className="hidden" id="import-file" />
+                  <label htmlFor="import-file" className="btn-secondary mt-4 inline-flex cursor-pointer">Choose File</label>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><HistoryIcon size={20} /> Recent Backups</h3>
+              <div className="card overflow-hidden">
+                <table className="w-full">
+                  <thead><tr className="text-left text-sm text-dark-400 border-b border-dark-700"><th className="p-3">Created</th><th className="p-3">Size</th><th className="p-3">Contents</th><th className="p-3 w-12"></th></tr></thead>
+                  <tbody className="divide-y divide-dark-700">
+                    {[
+                      { date: 'Today, 14:28', size: '42 KB', contents: 'Full config' },
+                      { date: 'Yesterday, 22:15', size: '38 KB', contents: 'Full config' },
+                      { date: '3 days ago', size: '156 KB', contents: 'Strategies + Backtests' },
+                      { date: '1 week ago', size: '42 KB', contents: 'Full config' },
+                    ].map((b, i) => (
+                      <tr key={i} className="hover:bg-dark-800/50">
+                        <td className="p-3 text-sm text-dark-100">{b.date}</td>
+                        <td className="p-3 font-mono text-sm text-dark-300">{b.size}</td>
+                        <td className="p-3 text-sm text-dark-400">{b.contents}</td>
+                        <td className="p-3"><button className="p-2 rounded hover:bg-dark-700 text-dark-400" title="Download"><Download size={14} /></button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Database size={20} /> Data Management</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onClick={() => toast.success('Alert history archived')} className="card text-left hover:border-primary-500/50 transition-all">
+                  <Archive size={20} className="text-blue-400 mb-2" />
+                  <p className="font-medium text-dark-100">Archive Old Alerts</p>
+                  <p className="text-xs text-dark-400 mt-1">Move alerts older than 90 days</p>
+                </button>
+                <button onClick={() => toast.success('Cache cleared (24 MB freed)')} className="card text-left hover:border-primary-500/50 transition-all">
+                  <Trash2 size={20} className="text-red-400 mb-2" />
+                  <p className="font-medium text-dark-100">Clear Cache</p>
+                  <p className="text-xs text-dark-400 mt-1">Free up disk space</p>
+                </button>
+                <button onClick={() => { if (confirm('Delete all alerts? This cannot be undone.')) toast.success('All alerts deleted'); }} className="card text-left hover:border-red-500/50 transition-all">
+                  <AlertOctagon size={20} className="text-red-400 mb-2" />
+                  <p className="font-medium text-dark-100">Reset All Data</p>
+                  <p className="text-xs text-dark-400 mt-1">Delete alerts, history, cache</p>
+                </button>
               </div>
             </div>
           )}

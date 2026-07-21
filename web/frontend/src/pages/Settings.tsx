@@ -1,11 +1,70 @@
-import { Bell, Moon, Sun, Monitor, Shield, Key, Database, Wifi, Terminal, Globe, Palette, Clock, Trash2, Save, TestTube, ToggleLeft, ToggleRight, AlertTriangle, CheckCircle, XCircle, WifiOff, Info, Plus, ChevronDown, ChevronUp, Zap, Target, BarChart2, Download, RefreshCw, Share2, BellRing, BellOff, SlidersHorizontal, GitMerge, Code2, Braces, FunctionSquare, Link2, Unlink2, Eye, EyeOff, RotateCcw, RotateCw, Flag, FlagOff, Bookmark, BookmarkPlus, Archive, ArchiveRestore, Settings, Search, Upload, Cloud, Server, Cpu, HardDrive, LayoutDashboard, Key as KeyIcon, KeyRound, Fingerprint, ScanEye, ScanFace, ScanLine, ScanSearch, ScanText, Barcode, QrCode, Ticket, TicketCheck, TicketMinus, TicketPlus, TicketX, TicketPercent, Clipboard, ClipboardCheck, ClipboardCopy, ClipboardList, ClipboardMinus, ClipboardPlus, ClipboardX, ClipboardType, File, FileCheck, FileCog, FileDown, FileInput, FileMinus, FileOutput, FilePlus, FileSearch, FileText as FileTextIcon, FileUp, FileX, FileQuestion, FileWarning, FileKey, FileLock, FilePen, FileCode, FileJson, Files, FileSpreadsheet, FileAudio, FileVideo, FileImage, FileArchive, FileSymlink, FileBadge, FileTerminal, FileStack, Folder, FolderCheck, FolderClock, FolderClosed, FolderCode, FolderCog, FolderDot, FolderDown, FolderGit, FolderHeart, FolderInput, FolderKanban, FolderLock, FolderMinus, FolderOpen, FolderOutput, FolderPen, FolderPlus as FolderPlusIcon, FolderRoot, FolderSearch, FolderSync, FolderTree, FolderUp, FolderX, Mail as MailIcon, MailCheck, MailMinus, MailOpen, MailPlus, MailQuestion, MailSearch, MailWarning, MailX, MessageSquare, MessageCircle, Sparkles as SparklesIcon, Flame, Bolt, Cloud as CloudIcon, CloudLightning, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudHail, CloudSun, CloudMoon, Star, StarHalf, Award, Trophy, Medal, Ribbon, Crown, Gem, Diamond, Heart, HeartHandshake, Handshake, Users, User, UserPlus, UserMinus, UserCheck, UserX, UserCog, Shield as ShieldIcon, ShieldCheck, ShieldX, ShieldAlert, ShieldOff, Lock, LockOpen } from 'lucide-react';
+import { Bell, Moon, Sun, Monitor, Shield, Key, Database, Wifi, Terminal, Globe, Palette, Clock, Trash2, Save, TestTube, ToggleLeft, ToggleRight, AlertTriangle, CheckCircle, XCircle, WifiOff, Info, Plus, ChevronDown, ChevronUp, Zap, Target, BarChart2, Download, RefreshCw, Share2, BellRing, BellOff, SlidersHorizontal, GitMerge, Code2, Braces, FunctionSquare, Link2, Unlink2, Eye, EyeOff, RotateCcw, RotateCw, Flag, FlagOff, Bookmark, BookmarkPlus, Archive, ArchiveRestore, Settings, Search, Upload, Cloud, Server, Cpu, HardDrive, LayoutDashboard, Key as KeyIcon, KeyRound, Fingerprint, ScanEye, ScanFace, ScanLine, ScanSearch, ScanText, Barcode, QrCode, Ticket, TicketCheck, TicketMinus, TicketPlus, TicketX, TicketPercent, Clipboard, ClipboardCheck, ClipboardCopy, ClipboardList, ClipboardMinus, ClipboardPlus, ClipboardX, ClipboardType, File, FileCheck, FileCog, FileDown, FileInput, FileMinus, FileOutput, FilePlus, FileSearch, FileText as FileTextIcon, FileUp, FileX, FileQuestion, FileWarning, FileKey, FileLock, FilePen, FileCode, FileJson, Files, FileSpreadsheet, FileAudio, FileVideo, FileImage, FileArchive, FileSymlink, FileBadge, FileTerminal, FileStack, Folder, FolderCheck, FolderClock, FolderClosed, FolderCode, FolderCog, FolderDot, FolderDown, FolderGit, FolderHeart, FolderInput, FolderKanban, FolderLock, FolderMinus, FolderOpen, FolderOutput, FolderPen, FolderPlus as FolderPlusIcon, FolderRoot, FolderSearch, FolderSync, FolderTree, FolderUp, FolderX, Mail as MailIcon, MailCheck, MailMinus, MailOpen, MailPlus, MailQuestion, MailSearch, MailWarning, MailX, MessageSquare, MessageCircle, Sparkles as SparklesIcon, Flame, Bolt, Cloud as CloudIcon, CloudLightning, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudHail, CloudSun, CloudMoon, Star, StarHalf, Award, Trophy, Medal, Ribbon, Crown, Gem, Diamond, Heart, HeartHandshake, Handshake, Users, User, UserPlus, UserMinus, UserCheck, UserX, UserCog, Shield as ShieldIcon, ShieldCheck, ShieldX, ShieldAlert, ShieldOff, Lock, LockOpen, MoreVertical, Activity, Edit, X, Send } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: 'Owner' | 'Admin' | 'Trader' | 'Viewer';
+  status: 'active' | 'inactive';
+  apiKeys: number;
+  lastActive: string;
+}
+
+interface PermissionRow {
+  capability: string;
+  owner: boolean;
+  admin: boolean;
+  trader: boolean;
+  viewer: boolean;
+}
+
+interface ActivityEntry {
+  id: string;
+  user: string;
+  action: string;
+  target: string;
+  type: 'invite' | 'role' | 'edit';
+  time: string;
+}
+
+const teamMembers: TeamMember[] = [
+  { id: '1', name: 'Naman Sharma', email: 'naman@stockalert.io', role: 'Owner', status: 'active', apiKeys: 8, lastActive: 'Just now' },
+  { id: '2', name: 'Priya Patel', email: 'priya@stockalert.io', role: 'Admin', status: 'active', apiKeys: 4, lastActive: '5 min ago' },
+  { id: '3', name: 'Arjun Mehta', email: 'arjun@stockalert.io', role: 'Trader', status: 'active', apiKeys: 2, lastActive: '2 hours ago' },
+  { id: '4', name: 'Sneha Reddy', email: 'sneha@stockalert.io', role: 'Trader', status: 'active', apiKeys: 3, lastActive: 'Yesterday' },
+  { id: '5', name: 'Rohit Kumar', email: 'rohit@stockalert.io', role: 'Viewer', status: 'inactive', apiKeys: 0, lastActive: '5 days ago' },
+  { id: '6', name: 'Ananya Singh', email: 'ananya@stockalert.io', role: 'Viewer', status: 'active', apiKeys: 0, lastActive: '1 hour ago' },
+];
+
+const permissions: PermissionRow[] = [
+  { capability: 'View dashboard & alerts', owner: true, admin: true, trader: true, viewer: true },
+  { capability: 'Manage symbols & watchlist', owner: true, admin: true, trader: true, viewer: false },
+  { capability: 'Create & edit strategies', owner: true, admin: true, trader: true, viewer: false },
+  { capability: 'Configure data providers & API keys', owner: true, admin: true, trader: false, viewer: false },
+  { capability: 'Send alerts via Telegram/Bot', owner: true, admin: true, trader: true, viewer: false },
+  { capability: 'Manage integrations (Discord/Slack)', owner: true, admin: true, trader: false, viewer: false },
+  { capability: 'View backtest results', owner: true, admin: true, trader: true, viewer: true },
+  { capability: 'Manage team members & roles', owner: true, admin: false, trader: false, viewer: false },
+  { capability: 'Billing & subscription', owner: true, admin: false, trader: false, viewer: false },
+  { capability: 'Delete workspace', owner: true, admin: false, trader: false, viewer: false },
+];
+
+const activityLog: ActivityEntry[] = [
+  { id: '1', user: 'Naman Sharma', action: 'invited', target: 'ananya@stockalert.io as Viewer', type: 'invite', time: '1 hour ago' },
+  { id: '2', user: 'Priya Patel', action: 'changed role of', target: 'Arjun Mehta to Trader', type: 'role', time: '3 hours ago' },
+  { id: '3', user: 'Naman Sharma', action: 'updated API keys for', target: 'Zerodha Kite integration', type: 'edit', time: '5 hours ago' },
+  { id: '4', user: 'Arjun Mehta', action: 'enabled strategy', target: 'momentum_breakout on 15m timeframe', type: 'edit', time: 'Yesterday at 18:42' },
+  { id: '5', user: 'Naman Sharma', action: 'invited', target: 'sneha@stockalert.io as Trader', type: 'invite', time: '2 days ago' },
+];
+
 export default function SettingsPage() {
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>('dark');
-  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations' | 'teams'>('general');
   const [saving, setSaving] = useState(false);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [newMember, setNewMember] = useState<{ email: string; role: 'Admin' | 'Trader' | 'Viewer'; message: string }>({ email: '', role: 'Viewer', message: '' });
   
   const [config, setConfig] = useState({
     general: {
@@ -137,6 +196,7 @@ export default function SettingsPage() {
     { id: 'integrations', label: 'Integrations', icon: Link2 },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'data', label: 'Data & Cache', icon: Database },
+    { id: 'teams', label: 'Teams', icon: Users },
     { id: 'advanced', label: 'Advanced', icon: Terminal },
   ];
 
@@ -733,6 +793,153 @@ export default function SettingsPage() {
                     <input type="checkbox" checked={config.data.autoCleanup} onChange={e => setConfig({...config, data: {...config.data, autoCleanup: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Auto cleanup old data</span>
                   </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'teams' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Users size={20} /> Team Members</h3>
+                  <p className="text-sm text-dark-400 mt-1">Manage who has access to your StockAlert workspace</p>
+                </div>
+                <button onClick={() => setShowAddMember(true)} className="btn-primary gap-2">
+                  <Plus size={18} /> Invite Member
+                </button>
+              </div>
+
+              <div className="card overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-sm text-dark-400 border-b border-dark-700">
+                      <th className="p-4">Member</th>
+                      <th className="p-4">Role</th>
+                      <th className="p-4">Status</th>
+                      <th className="p-4">API Keys</th>
+                      <th className="p-4">Last Active</th>
+                      <th className="p-4 w-12"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-dark-700">
+                    {teamMembers.map((m) => {
+                      const RoleIcon = m.role === 'Owner' ? Crown : m.role === 'Admin' ? Shield : m.role === 'Trader' ? Target : Eye;
+                      const roleColor = m.role === 'Owner' ? 'text-accent-400' : m.role === 'Admin' ? 'text-primary-400' : m.role === 'Trader' ? 'text-blue-400' : 'text-dark-400';
+                      return (
+                        <tr key={m.id} className="hover:bg-dark-800/50 transition-colors">
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-semibold">
+                                {m.name.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              <div>
+                                <p className="font-medium text-dark-100">{m.name}</p>
+                                <p className="text-xs text-dark-400">{m.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-dark-800 ${roleColor}`}>
+                              <RoleIcon size={12} />
+                              {m.role}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <span className={`badge ${m.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${m.status === 'active' ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`} />
+                              {m.status === 'active' ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <span className="badge bg-purple-500/20 text-purple-400">{m.apiKeys} keys</span>
+                          </td>
+                          <td className="p-4 text-sm text-dark-400">{m.lastActive}</td>
+                          <td className="p-4">
+                            <button className="p-2 rounded hover:bg-dark-700 text-dark-400 hover:text-dark-100 transition-colors">
+                              <MoreVertical size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2 pt-4"><Key size={20} /> Role Permissions</h3>
+              <div className="card overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-sm text-dark-400 border-b border-dark-700">
+                      <th className="p-4">Capability</th>
+                      <th className="p-4 text-center">Owner</th>
+                      <th className="p-4 text-center">Admin</th>
+                      <th className="p-4 text-center">Trader</th>
+                      <th className="p-4 text-center">Viewer</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-dark-700">
+                    {permissions.map((p) => (
+                      <tr key={p.capability}>
+                        <td className="p-4 text-dark-300">{p.capability}</td>
+                        <td className="p-4 text-center">{p.owner ? <CheckCircle size={18} className="text-green-400 inline" /> : <XCircle size={18} className="text-dark-600 inline" />}</td>
+                        <td className="p-4 text-center">{p.admin ? <CheckCircle size={18} className="text-green-400 inline" /> : <XCircle size={18} className="text-dark-600 inline" />}</td>
+                        <td className="p-4 text-center">{p.trader ? <CheckCircle size={18} className="text-green-400 inline" /> : <XCircle size={18} className="text-dark-600 inline" />}</td>
+                        <td className="p-4 text-center">{p.viewer ? <CheckCircle size={18} className="text-green-400 inline" /> : <XCircle size={18} className="text-dark-600 inline" />}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2 pt-4"><Activity size={20} /> Recent Activity</h3>
+              <div className="card divide-y divide-dark-700">
+                {activityLog.map((a) => (
+                  <div key={a.id} className="p-4 flex items-start gap-3">
+                    <div className={`p-2 rounded-lg flex-shrink-0 ${a.type === 'invite' ? 'bg-blue-500/10' : a.type === 'role' ? 'bg-purple-500/10' : 'bg-primary-500/10'}`}>
+                      {a.type === 'invite' ? <UserPlus size={16} className="text-blue-400" /> : a.type === 'role' ? <Shield size={16} className="text-purple-400" /> : <Edit size={16} className="text-primary-400" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-dark-200"><span className="font-medium text-dark-100">{a.user}</span> {a.action} <span className="font-medium text-dark-100">{a.target}</span></p>
+                      <p className="text-xs text-dark-500 mt-0.5">{a.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {showAddMember && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in" onClick={() => setShowAddMember(false)}>
+              <div className="card-elevated max-w-md w-full p-6 space-y-4 scale-in" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-dark-50 flex items-center gap-2"><UserPlus size={20} className="text-primary-400" /> Invite Team Member</h3>
+                  <button onClick={() => setShowAddMember(false)} className="p-1.5 rounded hover:bg-dark-700 text-dark-400">
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="label">Email Address</label>
+                    <input type="email" placeholder="trader@example.com" className="input" value={newMember.email} onChange={e => setNewMember({...newMember, email: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="label">Role</label>
+                    <select className="input" value={newMember.role} onChange={e => setNewMember({...newMember, role: e.target.value as any})}>
+                      <option value="Admin">Admin — Full access except billing</option>
+                      <option value="Trader">Trader — Can view + execute alerts</option>
+                      <option value="Viewer">Viewer — Read-only access</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="label">Personal Message (optional)</label>
+                    <textarea className="input h-20" placeholder="Hey, joining you on StockAlert..." value={newMember.message} onChange={e => setNewMember({...newMember, message: e.target.value})} />
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <button onClick={() => { toast.success(`Invite sent to ${newMember.email || 'user'}`); setShowAddMember(false); setNewMember({ email: '', role: 'Viewer', message: '' }); }} className="btn-primary flex-1">Send Invite</button>
+                  <button onClick={() => setShowAddMember(false)} className="btn-secondary">Cancel</button>
                 </div>
               </div>
             </div>

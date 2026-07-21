@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 export default defineConfig({
+    base: '/stock-alerts/',
     plugins: [react()],
     server: {
-        allowedHosts: ['western-grain-judy-hero.trycloudflare.com', 'objects-patio-con-champagne.trycloudflare.com', '.trycloudflare.com', 'all'],
+        allowedHosts: true,
         port: 5173,
         proxy: {
             '/api': {

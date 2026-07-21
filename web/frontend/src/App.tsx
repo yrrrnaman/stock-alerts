@@ -6,6 +6,7 @@ import Symbols from './pages/Symbols';
 import Strategies from './pages/Strategies';
 import Alerts from './pages/Alerts';
 import { Tools } from './pages/Tools';
+import Analysis from './pages/Analysis';
 import Settings from './pages/Settings';
 import './index.css';
 
@@ -42,6 +43,7 @@ function App() {
           <Route path="strategies" element={<Strategies />} />
           <Route path="alerts" element={<Alerts />} />
           <Route path="tools" element={<Tools />} />
+          <Route path="analysis" element={<Analysis />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

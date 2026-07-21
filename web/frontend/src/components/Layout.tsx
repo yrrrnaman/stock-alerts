@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, BarChart2, ListChecks, Zap, Settings, ChevronLeft, ChevronRight,
-  Menu, X, Moon, Sun, Monitor, Sparkles
+  Menu, X, Moon, Sun, Monitor, Sparkles, LineChart
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
@@ -11,6 +11,7 @@ const navItems = [
   { path: '/strategies', label: 'Strategies', icon: Zap },
   { path: '/alerts', label: 'Alerts', icon: ListChecks },
   { path: '/tools', label: 'Tools', icon: Sparkles },
+  { path: '/analysis', label: 'Analysis', icon: LineChart },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 

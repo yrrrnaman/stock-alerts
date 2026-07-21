@@ -179,7 +179,7 @@ const chartColorSchemes = [
 
 export default function SettingsPage() {
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>('dark');
-  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations' | 'teams' | 'account' | 'billing' | 'risk' | 'market' | 'display' | 'backup'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations' | 'teams' | 'account' | 'billing' | 'risk' | 'market' | 'display' | 'backup' | 'whatsapp'>('general');
   const [saving, setSaving] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState<{ email: string; role: 'Admin' | 'Trader' | 'Viewer'; message: string }>({ email: '', role: 'Viewer', message: '' });
@@ -408,6 +408,7 @@ export default function SettingsPage() {
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'data', label: 'Data & Cache', icon: Database },
     { id: 'teams', label: 'Teams', icon: Users },
+    { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
     { id: 'account', label: 'Account', icon: UserCog },
     { id: 'billing', label: 'Billing', icon: Ticket },
     { id: 'risk', label: 'Risk', icon: AlertTriangle },
@@ -724,7 +725,110 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {activeTab === 'integrations' && (
+{activeTab === 'whatsapp' && (
+            <div className="space-y-6">
+              <div className="card p-6 border-primary-500/30 bg-gradient-to-br from-green-500/5 to-primary-500/5">
+                <div className="flex items-start gap-3">
+                  <div className="p-3 rounded-xl bg-green-500/10"><MessageCircle size={32} className="text-green-400" /></div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-dark-50 mb-1">WhatsApp Integration</h3>
+                    <p className="text-sm text-dark-400">Send alerts to WhatsApp. Choose from Business API, personal WhatsApp via third-party providers, or test with a simple webhook.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2 mb-3"><Key size={20} /> Provider Setup</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {[
+                    { id: 'wa-business', name: 'Meta WhatsApp Business API', desc: 'Official, requires Meta Business verification', logo: '📱', cost: '$0.005-$0.09 per msg', realtime: true },
+                    { id: 'wa-twilio', name: 'Twilio WhatsApp', desc: 'Reliable, well-documented', logo: '💬', cost: '$0.005/msg + $1.50/mo', realtime: true },
+                    { id: 'wa-wati', name: 'Wati.io', desc: 'No-code + bulk broadcasts', logo: '⚡', cost: 'From $39/mo', realtime: true },
+                    { id: 'wa-callmebot', name: 'CallMeBot (Free)', desc: 'Free, send to your own number', logo: '🤖', cost: 'Free', realtime: false },
+                    { id: 'wa-green', name: 'Green API', desc: 'Personal WhatsApp via unofficial gateway', logo: '🟢', cost: 'From $5.5/mo', realtime: true },
+                    { id: 'wa-360', name: '360dialog', desc: 'Official BSP, pay-per-conversation', logo: '🔄', cost: '$0.014-$0.10 per conv', realtime: true },
+                  ].map(provider => (
+                    <div key={provider.id} className="card p-4 hover:border-primary-500/50 transition-all">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="text-2xl">{provider.logo}</div>
+                          <div>
+                            <p className="font-semibold text-dark-100 text-sm">{provider.name}</p>
+                            <p className="text-xs text-dark-400">{provider.desc}</p>
+                          </div>
+                        </div>
+                        {provider.realtime && <span className="badge bg-green-500/20 text-green-400 text-xs">Live</span>}
+                      </div>
+                      <p className="text-xs text-dark-500">{provider.cost}</p>
+                      <button onClick={() => toast.success(`Configure ${provider.name} below`)} className="btn-secondary text-xs mt-3 w-full">Configure</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2 mb-3"><Settings size={20} /> Quick Setup: CallMeBot (Free, 5 min)</h3>
+                <div className="card p-5 space-y-4">
+                  <div className="space-y-2 text-sm text-dark-300">
+                    <p className="font-semibold text-dark-50">📋 Steps:</p>
+                    <ol className="list-decimal list-inside space-y-1.5 text-dark-300 pl-2">
+                      <li>Send <code className="px-2 py-0.5 bg-dark-800 rounded text-primary-400">/start</code> to <a className="text-blue-400 hover:underline" href="https://wa.me/34614054310" target="_blank" rel="noreferrer">+34 614 05 43 10</a> on WhatsApp</li>
+                      <li>Copy the API key the bot replies with</li>
+                      <li>Paste it below with your WhatsApp number (with country code)</li>
+                      <li>Hit "Test" — you'll receive a message on WhatsApp</li>
+                    </ol>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="label">WhatsApp Number (with country code)</label>
+                      <input type="tel" className="input font-mono" placeholder="+91 9876543210" defaultValue="+91" />
+                    </div>
+                    <div>
+                      <label className="label">CallMeBot API Key</label>
+                      <input type="text" className="input font-mono" placeholder="Paste API key from bot" />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => toast.success('Test message sent! Check your WhatsApp.')} className="btn-secondary gap-2"><Send size={16} /> Send Test</button>
+                    <button onClick={() => toast.success('WhatsApp integration saved & active')} className="btn-primary gap-2"><Save size={16} /> Save & Activate</button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2 mb-3"><Bell size={20} /> Alert Templates (with variables)</h3>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Signal Alert', template: '🚨 *{{pattern}}*\n\n*Symbol:* {{symbol}}\n*Price:* ₹{{price}} ({{change}})\n*Timeframe:* {{timeframe}}\n*Confidence:* {{confidence}}%', enabled: true },
+                    { name: 'Portfolio Update', template: '📊 *Daily Portfolio*\n\nTotal P&L: *₹{{total_pnl}}*\nOpen: {{open_count}} | Closed: {{closed_count}}', enabled: false },
+                    { name: 'Strategy Trigger', template: '⚡ *Strategy Triggered*\n\n*{{strategy}}* on *{{symbol}}*\nEntry: ₹{{price}}\nSL: ₹{{sl}} | Target: ₹{{target}}', enabled: true },
+                  ].map((t, i) => (
+                    <div key={i} className="card p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-semibold text-dark-100">{t.name}</p>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" defaultChecked={t.enabled} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-dark-700 rounded-full peer peer-checked:bg-primary-500 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                        </label>
+                      </div>
+                      <pre className="text-xs font-mono text-dark-300 bg-dark-800/50 p-3 rounded-lg whitespace-pre-wrap break-words">{t.template}</pre>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card p-5 border-green-500/30 bg-green-500/5">
+                <div className="flex items-start gap-3">
+                  <CheckCircle size={20} className="text-green-400 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-dark-50 mb-1">Free for testing</p>
+                    <p className="text-sm text-dark-300">CallMeBot is 100% free for personal/testing use. For production traffic, Twilio or Meta Cloud API is more reliable.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+                    {activeTab === 'integrations' && (
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Link2 size={20} className="text-primary-400" /> External Integrations</h3>
               

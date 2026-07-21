@@ -19,7 +19,7 @@ apscheduler>=3.10.0
 
 # Plotting (for charts)
 matplotlib>=3.8.0
-mplfinance>=0.12.10
+mplfinance>=0.12.10b0
 
 # Logging
 loguru>=0.7.0

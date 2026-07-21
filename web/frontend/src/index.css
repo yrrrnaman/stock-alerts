@@ -11,6 +11,49 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #020617;
   color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  :root {
+    --color-dark-50: #f8fafc;
+    --color-dark-100: #f1f5f9;
+    --color-dark-200: #e2e8f0;
+    --color-dark-300: #cbd5e1;
+    --color-dark-400: #94a3b8;
+    --color-dark-500: #64748b;
+    --color-dark-600: #475569;
+    --color-dark-700: #334155;
+    --color-dark-800: #1e293b;
+    --color-dark-900: #0f172a;
+    --color-dark-950: #020617;
+    
+    --color-primary-50: #f0fdf4;
+    --color-primary-100: #dcfce7;
+    --color-primary-200: #bbf7d0;
+    --color-primary-300: #86efac;
+    --color-primary-400: #4ade80;
+    --color-primary-500: #22c55e;
+    --color-primary-600: #16a34a;
+    --color-primary-700: #15803d;
+    --color-primary-800: #166534;
+    --color-primary-900: #14532d;
+    
+    --color-accent-50: #fffbeb;
+    --color-accent-100: #fef3c7;
+    --color-accent-200: #fde68a;
+    --color-accent-300: #fcd34d;
+    --color-accent-400: #fbbf24;
+    --color-accent-500: #f59e0b;
+    --color-accent-600: #d97706;
+    --color-accent-700: #b45309;
+    --color-accent-800: #92400e;
+    --color-accent-900: #78350f;
+    
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+  }
 }
 
 @layer components {
@@ -18,35 +61,91 @@ body {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500;
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500 shadow-lg shadow-primary-500/25;
   }
   .btn-secondary {
     @apply btn bg-dark-700 text-dark-100 border border-dark-600 hover:bg-dark-600 focus:ring-dark-500;
   }
   .btn-ghost {
-    @apply btn bg-transparent text-dark-300 hover:bg-dark-800 hover:text-dark-100 focus:ring-dark-500;
+    @apply btn bg-transparent text-dark-300 hover:bg-dark-800/50 hover:text-dark-100 focus:ring-dark-500;
   }
   .btn-danger {
     @apply btn bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 focus:ring-red-500;
   }
+  .btn-outline {
+    @apply btn bg-transparent border-2 border-dark-600 text-dark-300 hover:border-primary-500 hover:text-primary-400 focus:ring-primary-500;
+  }
   .input {
-    @apply w-full px-3 py-2 bg-dark-800 border border-dark-600 rounded-lg text-dark-100 placeholder-dark-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+    @apply w-full px-3 py-2.5 bg-dark-800 border border-dark-600 rounded-lg text-dark-100 placeholder-dark-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
   }
   .label {
     @apply block text-sm font-medium text-dark-300 mb-1.5;
   }
   .card {
-    @apply bg-dark-900/50 border border-dark-700 rounded-xl p-6 backdrop-blur-sm;
+    @apply bg-dark-900/50 border border-dark-700 rounded-xl p-6 backdrop-blur-sm transition-all duration-200 hover:border-dark-600;
+  }
+  .card-elevated {
+    @apply bg-dark-900 border border-dark-700 rounded-xl shadow-xl shadow-black/20;
   }
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
+  .glass {
+    @apply bg-dark-900/80 backdrop-blur-xl border border-dark-700/50;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+@layer utilities {
+  .animate-in {
+    animation: animateIn 0.3s ease-out forwards;
+  }
+  .fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  .slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+  .slide-down {
+    animation: slideDown 0.3s ease-out forwards;
+  }
+  .scale-in {
+    animation: scaleIn 0.2s ease-out forwards;
+  }
+  .pulse-soft {
+    animation: pulseSoft 2s ease-in-out infinite;
+  }
+  @keyframes animateIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulseSoft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
 }

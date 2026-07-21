@@ -5,7 +5,9 @@ import Dashboard from './pages/Dashboard';
 import Symbols from './pages/Symbols';
 import Strategies from './pages/Strategies';
 import Alerts from './pages/Alerts';
+import { Tools } from './pages/Tools';
 import Settings from './pages/Settings';
+import './index.css';
 
 function App() {
   return (
@@ -19,8 +21,18 @@ function App() {
             color: '#f1f5f9',
             border: '1px solid #334155',
           },
-          success: { iconTheme: { primary: '#22c55e', secondary: '#f1f5f9' } },
-          error: { iconTheme: { primary: '#ef4444', secondary: '#f1f5f9' } },
+          success: {
+            iconTheme: {
+              primary: '#22c55e',
+              secondary: '#f1f5f9',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#f1f5f9',
+            },
+          },
         }}
       />
       <Routes>
@@ -29,6 +41,7 @@ function App() {
           <Route path="symbols" element={<Symbols />} />
           <Route path="strategies" element={<Strategies />} />
           <Route path="alerts" element={<Alerts />} />
+          <Route path="tools" element={<Tools />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

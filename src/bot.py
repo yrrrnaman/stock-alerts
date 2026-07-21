@@ -11,6 +11,7 @@ from src.config import Config
 from src.data import DataManager
 from src.patterns import PatternAnalyzer, TechnicalIndicators
 from src.alerts import AlertManager
+from src.codex_analyzer import CodexAnalyzer, create_codex_analyzer_from_config
 
 
 class StockAlertBot:
@@ -22,6 +23,22 @@ class StockAlertBot:
         self.pattern_analyzer = PatternAnalyzer(config.patterns.model_dump())
         self.alert_manager = AlertManager(config)
         
+        # Initialize Codex analyzer if enabled
+        self.codex_analyzer = None
+        if config.codex.get("enabled", False):
+            try:
+                codex_config = {
+                    "openai_api_key": config.codex.get("api_key", ""),
+                    "codex_model": config.codex.get("model", "gpt-4o"),
+                    "codex_analyze_patterns": config.codex.get("analyze_patterns", True),
+                    "codex_analyze_strategies": config.codex.get("analyze_strategies", True),
+                    "codex_generate_alerts": config.codex.get("generate_alerts", True),
+                }
+                self.codex_analyzer = create_codex_analyzer_from_config(codex_config)
+                logger.info("Codex AI analyzer initialized")
+            except Exception as e:
+                logger.warning(f"Failed to initialize Codex analyzer: {e}")
+        
         # Stats
         self.stats = {
             "scans": 0,
@@ -29,6 +46,8 @@ class StockAlertBot:
             "alerts_sent": 0,
             "errors": 0,
             "last_scan": None,
+            "codex_calls": 0,
+            "codex_errors": 0,
         }
     
     async def scan_all(self) -> List[Dict[str, Any]]:
@@ -71,6 +90,10 @@ class StockAlertBot:
                 logger.error(f"Error analyzing {key}: {e}")
                 self.stats["errors"] += 1
         
+        # Enhance alerts with Codex if enabled
+        if self.codex_analyzer and all_alerts:
+            all_alerts = await self._enhance_with_codex(all_alerts, data)
+        
         # Send alerts
         if all_alerts:
             sent = await self.alert_manager.send_bulk(all_alerts, data)
@@ -86,6 +109,91 @@ class StockAlertBot:
         logger.info(f"Scan completed in {elapsed:.1f}s | Signals: {len(all_alerts)}")
         
         return all_alerts
+    
+    async def _enhance_with_codex(self, alerts: List[Dict], data: Dict) -> List[Dict]:
+        """Enhance alerts with Codex AI analysis"""
+        
+        if not self.codex_analyzer:
+            return alerts
+        
+        enhanced = []
+        
+        for alert in alerts:
+            try:
+                signal = alert["signal"]
+                pattern = signal.get("pattern", "Unknown")
+                symbol = alert["symbol"]
+                timeframe = alert["timeframe"]
+                
+                # Prepare market context
+                market_context = await self._get_market_context(symbol, timeframe, data)
+                
+                # Analyze with Codex
+                if self.config.codex.get("analyze_patterns", True):
+                    analysis = self.codex_analyzer.analyze_pattern(
+                        symbol=symbol,
+                        pattern_name=pattern,
+                        pattern_data=self._extract_pattern_data(signal),
+                        market_context=market_context,
+                        timeframe=timeframe
+                    )
+                    
+                    # Add Codex insights to alert
+                    alert["codex_analysis"] = {
+                        "summary": analysis.summary,
+                        "recommendation": analysis.recommendation,
+                        "confidence": analysis.confidence,
+                        "risk_assessment": analysis.risk_assessment,
+                        "key_signals": analysis.signals[:3],
+                        "model": analysis.model_used
+                    }
+                    
+                    self.stats["codex_calls"] += 1
+                
+            except Exception as e:
+                logger.error(f"Codex enhancement failed for {alert['symbol']}: {e}")
+                self.stats["codex_errors"] += 1
+            
+            enhanced.append(alert)
+        
+        return enhanced
+    
+    def _extract_pattern_data(self, signal: Dict) -> Dict:
+        """Extract pattern data from signal for Codex analysis"""
+        return {
+            "open": signal.get("open", 0),
+            "high": signal.get("high", 0),
+            "low": signal.get("low", 0),
+            "close": signal.get("close", 0) or signal.get("price", 0),
+            "volume": signal.get("volume", 0),
+            "confidence": signal.get("confidence", 0.5)
+        }
+    
+    async def _get_market_context(self, symbol: str, timeframe: str, data: Dict) -> Dict:
+        """Get market context for Codex analysis"""
+        
+        # Get index data
+        nifty_data = data.get("^NSEI_1d") or data.get("^NSEI_1h")
+        bank_nifty = data.get("^NSEBANK_1d") or data.get("^NSEBANK_1h")
+        
+        # Get sector performance from same timeframe data
+        sector_perf = {}
+        for key, df in data.items():
+            if key.endswith(f"_{timeframe}") and len(df) > 0:
+                sym = key.rsplit("_", 1)[0]
+                if sym not in ["^NSEI", "^NSEBANK", "^NSEFIN", "^INDIAVIX"]:
+                    change = ((df.iloc[-1]["close"] - df.iloc[-2]["close"]) / df.iloc[-2]["close"]) * 100
+                    sector_perf[sym] = f"{change:+.2f}%"
+        
+        return {
+            "nifty": f"{nifty_data.iloc[-1]['close']:.0f} ({sector_perf.get('^NSEI', 'N/A')})" if nifty_data is not None else "N/A",
+            "bank_nifty": f"{bank_nifty.iloc[-1]['close']:.0f} ({sector_perf.get('^NSEBANK', 'N/A')})" if bank_nifty is not None else "N/A",
+            "sector": sector_perf.get(symbol.split(".")[0], "N/A") if "." in symbol else "N/A",
+            "trend": "Uptrend" if sector_perf.get(symbol.split(".")[0], "0").startswith("+") else "Downtrend",
+            "volume": "Above average" if sector_perf else "N/A",
+            "support": signal.get("support", "N/A"),
+            "resistance": signal.get("resistance", "N/A")
+        }
     
     async def _analyze_symbol(
         self, 

@@ -1,10 +1,10 @@
-import { Bell, Moon, Sun, Monitor, Shield, Key, Database, Wifi, Terminal, Globe, Palette, Clock, Save, TestTube, AlertTriangle, Info } from 'lucide-react';
+import { Bell, Moon, Sun, Monitor, Shield, Key, Database, Wifi, Terminal, Globe, Palette, Clock, Trash2, Save, TestTube, ToggleLeft, ToggleRight, AlertTriangle, CheckCircle, XCircle, WifiOff, Info, Plus, ChevronDown, ChevronUp, Zap, Target, BarChart2, Download, RefreshCw, Share2, BellRing, BellOff, SlidersHorizontal, GitMerge, Code2, Braces, FunctionSquare, Link2, Unlink2, Eye, EyeOff, RotateCcw, RotateCw, Flag, FlagOff, Bookmark, BookmarkPlus, Archive, ArchiveRestore, Settings, Search, Upload, Cloud, Server, Cpu, HardDrive, LayoutDashboard, Key as KeyIcon, KeyRound, Fingerprint, ScanEye, ScanFace, ScanLine, ScanSearch, ScanText, Barcode, QrCode, Ticket, TicketCheck, TicketMinus, TicketPlus, TicketX, TicketPercent, Clipboard, ClipboardCheck, ClipboardCopy, ClipboardList, ClipboardMinus, ClipboardPlus, ClipboardX, ClipboardType, File, FileCheck, FileCog, FileDown, FileInput, FileMinus, FileOutput, FilePlus, FileSearch, FileText as FileTextIcon, FileUp, FileX, FileQuestion, FileWarning, FileKey, FileLock, FilePen, FileCode, FileJson, Files, FileSpreadsheet, FileAudio, FileVideo, FileImage, FileArchive, FileSymlink, FileBadge, FileTerminal, FileStack, Folder, FolderCheck, FolderClock, FolderClosed, FolderCode, FolderCog, FolderDot, FolderDown, FolderGit, FolderHeart, FolderInput, FolderKanban, FolderLock, FolderMinus, FolderOpen, FolderOutput, FolderPen, FolderPlus as FolderPlusIcon, FolderRoot, FolderSearch, FolderSync, FolderTree, FolderUp, FolderX, Mail as MailIcon, MailCheck, MailMinus, MailOpen, MailPlus, MailQuestion, MailSearch, MailWarning, MailX, MessageSquare, MessageCircle, Sparkles as SparklesIcon, Flame, Bolt, Cloud as CloudIcon, CloudLightning, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudHail, CloudSun, CloudMoon, Star, StarHalf, Award, Trophy, Medal, Ribbon, Crown, Gem, Diamond, Heart, HeartHandshake, Handshake, Users, User, UserPlus, UserMinus, UserCheck, UserX, UserCog, Shield as ShieldIcon, ShieldCheck, ShieldX, ShieldAlert, ShieldOff, Lock, LockOpen } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>('dark');
-  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'api' | 'notifications' | 'data' | 'advanced' | 'integrations'>('general');
   const [saving, setSaving] = useState(false);
   
   const [config, setConfig] = useState({
@@ -16,31 +16,53 @@ export default function SettingsPage() {
       theme: theme,
       autoRefresh: true,
       compactMode: false,
+      soundEnabled: true,
+      animationsEnabled: true,
     },
     api: {
+      // Telegram
       telegramBotToken: '',
       telegramChatId: '',
+      // Data Providers
       dataProvider: 'yfinance',
+      // Zerodha Kite
       kiteApiKey: '',
       kiteAccessToken: '',
+      // Fyers
       fyersClientId: '',
       fyersAccessToken: '',
+      // Upstox
       upstoxAccessToken: '',
+      // Angel One
       angelApiKey: '',
       angelClientId: '',
       angelPassword: '',
       angelTotp: '',
+      // OpenAI/Codex
+      openaiApiKey: '',
+      codexModel: 'gpt-4o',
+      // Custom APIs
+      customApiEndpoint: '',
+      customApiKey: '',
     },
     notifications: {
       enableTelegram: true,
       enableBrowser: false,
       enableEmail: false,
+      enablePush: false,
+      enableDiscord: false,
+      enableSlack: false,
+      enableWhatsApp: false,
+      enableSMS: false,
       alertCooldown: 15,
       maxAlertsPerScan: 20,
       includeCharts: true,
       soundEnabled: true,
       onlyHighConfidence: false,
       minConfidence: 70,
+      quietHoursStart: '22:00',
+      quietHoursEnd: '08:00',
+      weekendNotifications: false,
     },
     data: {
       cacheTTL: 300,
@@ -49,6 +71,8 @@ export default function SettingsPage() {
       maxSymbols: 50,
       enableCache: true,
       compressionEnabled: true,
+      dataRetentionDays: 90,
+      autoCleanup: true,
     },
     advanced: {
       debugMode: false,
@@ -58,6 +82,27 @@ export default function SettingsPage() {
       webhookSecret: '',
       rateLimit: 100,
       corsEnabled: true,
+      apiTimeout: 30000,
+      maxConcurrentScans: 5,
+    },
+    integrations: {
+      // TradingView
+      tradingviewWebhookUrl: '',
+      tradingviewSecret: '',
+      // Discord
+      discordWebhookUrl: '',
+      discordBotToken: '',
+      // Slack
+      slackWebhookUrl: '',
+      slackBotToken: '',
+      // Google Sheets
+      googleSheetsId: '',
+      googleServiceAccount: '',
+      // Notion
+      notionToken: '',
+      notionDatabaseId: '',
+      // Webhooks
+      customWebhooks: [] as Array<{ name: string; url: string; events: string }>,
     }
   });
 
@@ -89,6 +134,7 @@ export default function SettingsPage() {
   const tabs = [
     { id: 'general', label: 'General', icon: Palette },
     { id: 'api', label: 'API Keys', icon: Key },
+    { id: 'integrations', label: 'Integrations', icon: Link2 },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'data', label: 'Data & Cache', icon: Database },
     { id: 'advanced', label: 'Advanced', icon: Terminal },
@@ -98,8 +144,15 @@ export default function SettingsPage() {
     <div className="space-y-6 animate-in fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-dark-50">Settings</h1>
-          <p className="text-dark-400 mt-1">Configure your StockAlert preferences</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-dark-50 flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-primary-500/10">
+              <Settings size={24} className="text-primary-400" />
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold text-dark-50">Settings</div>
+              <div className="text-dark-400 text-sm">Configure your StockAlert preferences and integrations</div>
+            </div>
+          </h1>
         </div>
         <button
           onClick={() => handleSave(activeTab)}
@@ -136,7 +189,7 @@ export default function SettingsPage() {
           </nav>
         </div>
 
-        <div className="p-6 max-w-4xl">
+        <div className="p-6 max-w-5xl">
           {activeTab === 'general' && (
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Palette size={20} /> Appearance</h3>
@@ -179,6 +232,7 @@ export default function SettingsPage() {
                     <option value="America/New_York">America/New_York (EST)</option>
                     <option value="Europe/London">Europe/London (GMT)</option>
                     <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+                    <option value="Asia/Dubai">Asia/Dubai (GST)</option>
                   </select>
                 </div>
                 <div>
@@ -188,6 +242,7 @@ export default function SettingsPage() {
                     <option value="hi">हिन्दी</option>
                     <option value="ta">தமிழ்</option>
                     <option value="te">తెలుగు</option>
+                    <option value="mr">मराठी</option>
                   </select>
                 </div>
               </div>
@@ -237,6 +292,28 @@ export default function SettingsPage() {
                       className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
                     />
                     <span>Compact mode</span>
+                  </label>
+                </div>
+                <div>
+                  <label className="label flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={config.general.soundEnabled}
+                      onChange={e => setConfig({...config, general: {...config.general, soundEnabled: e.target.checked}})}
+                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
+                    />
+                    <span>Sound notifications</span>
+                  </label>
+                </div>
+                <div>
+                  <label className="label flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={config.general.animationsEnabled}
+                      onChange={e => setConfig({...config, general: {...config.general, animationsEnabled: e.target.checked}})}
+                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
+                    />
+                    <span>UI animations</span>
                   </label>
                 </div>
               </div>
@@ -350,6 +427,136 @@ export default function SettingsPage() {
                   Test Fyers
                 </button>
               </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Key size={20} /> AI / Codex Integration</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">OpenAI API Key</label>
+                  <input type="password" className="input" value={config.api.openaiApiKey} onChange={e => setConfig({...config, api: {...config.api, openaiApiKey: e.target.value}})} placeholder="sk-..." />
+                </div>
+                <div>
+                  <label className="label">Model</label>
+                  <select className="input" value={config.api.codexModel} onChange={e => setConfig({...config, api: {...config.api, codexModel: e.target.value}})}>
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'integrations' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Link2 size={20} className="text-primary-400" /> External Integrations</h3>
+              
+              <div className="card p-4">
+                <h4 className="font-semibold text-dark-100 mb-3">TradingView Webhook</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="label">Webhook URL</label>
+                    <input type="url" className="input" value={config.integrations.tradingviewWebhookUrl} onChange={e => setConfig({...config, integrations: {...config.integrations, tradingviewWebhookUrl: e.target.value}})} placeholder="https://your-server.com/webhook" />
+                  </div>
+                  <div>
+                    <label className="label">Secret Key</label>
+                    <input type="password" className="input" value={config.integrations.tradingviewSecret} onChange={e => setConfig({...config, integrations: {...config.integrations, tradingviewSecret: e.target.value}})} placeholder="Secret for signature verification" />
+                  </div>
+                </div>
+                <p className="text-sm text-dark-400">Add this webhook URL in TradingView Alert settings to receive alerts directly in StockAlert</p>
+              </div>
+
+              <div className="card p-4">
+                <h4 className="font-semibold text-dark-100 mb-3">Discord Bot</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="label">Webhook URL</label>
+                    <input type="url" className="input" value={config.integrations.discordWebhookUrl} onChange={e => setConfig({...config, integrations: {...config.integrations, discordWebhookUrl: e.target.value}})} placeholder="https://discord.com/api/webhooks/..." />
+                  </div>
+                  <div>
+                    <label className="label">Bot Token (Optional)</label>
+                    <input type="password" className="input" value={config.integrations.discordBotToken} onChange={e => setConfig({...config, integrations: {...config.integrations, discordBotToken: e.target.value}})} placeholder="For slash commands" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="card p-4">
+                <h4 className="font-semibold text-dark-100 mb-3">Slack Integration</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="label">Webhook URL</label>
+                    <input type="url" className="input" value={config.integrations.slackWebhookUrl} onChange={e => setConfig({...config, integrations: {...config.integrations, slackWebhookUrl: e.target.value}})} placeholder="https://hooks.slack.com/services/..." />
+                  </div>
+                  <div>
+                    <label className="label">Bot Token</label>
+                    <input type="password" className="input" value={config.integrations.slackBotToken} onChange={e => setConfig({...config, integrations: {...config.integrations, slackBotToken: e.target.value}})} placeholder="xoxb-..." />
+                  </div>
+                </div>
+              </div>
+
+              <div className="card p-4">
+                <h4 className="font-semibold text-dark-100 mb-3">Google Sheets Sync</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="label">Spreadsheet ID</label>
+                    <input type="text" className="input" value={config.integrations.googleSheetsId} onChange={e => setConfig({...config, integrations: {...config.integrations, googleSheetsId: e.target.value}})} placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" />
+                  </div>
+                  <div>
+                    <label className="label">Service Account JSON</label>
+                    <textarea className="input h-24" value={config.integrations.googleServiceAccount} onChange={e => setConfig({...config, integrations: {...config.integrations, googleServiceAccount: e.target.value}})} placeholder="Paste service account JSON here" />
+                  </div>
+                </div>
+                <p className="text-sm text-dark-400">Auto-sync signals and backtest results to Google Sheets</p>
+              </div>
+
+              <div className="card p-4">
+                <h4 className="font-semibold text-dark-100 mb-3">Notion Database</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="label">Integration Token</label>
+                    <input type="password" className="input" value={config.integrations.notionToken} onChange={e => setConfig({...config, integrations: {...config.integrations, notionToken: e.target.value}})} placeholder="secret_..." />
+                  </div>
+                  <div>
+                    <label className="label">Database ID</label>
+                    <input type="text" className="input" value={config.integrations.notionDatabaseId} onChange={e => setConfig({...config, integrations: {...config.integrations, notionDatabaseId: e.target.value}})} placeholder="32-char database ID" />
+                  </div>
+                </div>
+                <p className="text-sm text-dark-400">Log trades and journal entries directly to Notion</p>
+              </div>
+
+              <div className="card p-4">
+                <h4 className="font-semibold text-dark-100 mb-3">Custom Webhooks</h4>
+                <div className="space-y-3">
+                  {config.integrations.customWebhooks.map((webhook, i) => {
+                    const updateWebhook = (field: string, value: string) => {
+                      const arr = [...config.integrations.customWebhooks];
+                      arr[i] = { ...arr[i], [field]: value };
+                      setConfig({ ...config, integrations: { ...config.integrations, customWebhooks: arr } });
+                    };
+                    const deleteWebhook = () => {
+                      const arr = config.integrations.customWebhooks.filter((_, idx) => idx !== i);
+                      setConfig({ ...config, integrations: { ...config.integrations, customWebhooks: arr } });
+                    };
+                    return (
+                      <div key={i} className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg">
+                        <input type="text" className="input flex-1" placeholder="Webhook Name" value={webhook.name} onChange={e => updateWebhook('name', e.target.value)} />
+                        <input type="url" className="input flex-1" placeholder="Webhook URL" value={webhook.url} onChange={e => updateWebhook('url', e.target.value)} />
+                        <select className="input w-40" value={webhook.events} onChange={e => updateWebhook('events', e.target.value)}>
+                          <option value="">All Events</option>
+                          <option value="alert,signal">Alerts & Signals</option>
+                          <option value="scan_complete">Scan Complete</option>
+                          <option value="error">Errors</option>
+                        </select>
+                        <button className="p-2 rounded hover:bg-red-500/10 text-red-400" onClick={deleteWebhook}><Trash2 size={18} /></button>
+                      </div>
+                    );
+                  })}
+                  <button className="btn-secondary gap-2" onClick={() => { const arr: Array<{ name: string; url: string; events: string }> = [...config.integrations.customWebhooks, { name: '', url: '', events: '' }]; setConfig({...config, integrations: {...config.integrations, customWebhooks: arr}}); }}>
+                    <Plus size={18} />
+                    Add Webhook
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -359,39 +566,59 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="card p-4">
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.notifications.enableTelegram}
-                      onChange={e => setConfig({...config, notifications: {...config.notifications, enableTelegram: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.notifications.enableTelegram} onChange={e => setConfig({...config, notifications: {...config.notifications, enableTelegram: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span className="font-medium">Telegram Bot</span>
                   </label>
                   <p className="text-sm text-dark-500 mt-1">Send alerts via Telegram bot</p>
                 </div>
                 <div className="card p-4">
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.notifications.enableBrowser}
-                      onChange={e => setConfig({...config, notifications: {...config.notifications, enableBrowser: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.notifications.enableBrowser} onChange={e => setConfig({...config, notifications: {...config.notifications, enableBrowser: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span className="font-medium">Browser Notifications</span>
                   </label>
                   <p className="text-sm text-dark-500 mt-1">Desktop notifications</p>
                 </div>
                 <div className="card p-4">
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.notifications.enableEmail}
-                      onChange={e => setConfig({...config, notifications: {...config.notifications, enableEmail: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.notifications.enableEmail} onChange={e => setConfig({...config, notifications: {...config.notifications, enableEmail: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span className="font-medium">Email Alerts</span>
                   </label>
                   <p className="text-sm text-dark-500 mt-1">Email notifications (requires SMTP)</p>
+                </div>
+                <div className="card p-4">
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.notifications.enablePush} onChange={e => setConfig({...config, notifications: {...config.notifications, enablePush: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span className="font-medium">Push Notifications</span>
+                  </label>
+                  <p className="text-sm text-dark-500 mt-1">Mobile push via PWA</p>
+                </div>
+                <div className="card p-4">
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.notifications.enableDiscord} onChange={e => setConfig({...config, notifications: {...config.notifications, enableDiscord: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span className="font-medium">Discord</span>
+                  </label>
+                  <p className="text-sm text-dark-500 mt-1">Post to Discord channels</p>
+                </div>
+                <div className="card p-4">
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.notifications.enableSlack} onChange={e => setConfig({...config, notifications: {...config.notifications, enableSlack: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span className="font-medium">Slack</span>
+                  </label>
+                  <p className="text-sm text-dark-500 mt-1">Send to Slack workspaces</p>
+                </div>
+                <div className="card p-4">
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.notifications.enableWhatsApp} onChange={e => setConfig({...config, notifications: {...config.notifications, enableWhatsApp: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span className="font-medium">WhatsApp</span>
+                  </label>
+                  <p className="text-sm text-dark-500 mt-1">WhatsApp Business API</p>
+                </div>
+                <div className="card p-4">
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.notifications.enableSMS} onChange={e => setConfig({...config, notifications: {...config.notifications, enableSMS: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span className="font-medium">SMS Alerts</span>
+                  </label>
+                  <p className="text-sm text-dark-500 mt-1">Text messages via Twilio</p>
                 </div>
               </div>
 
@@ -399,68 +626,50 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="label">Cooldown (minutes)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="1440"
-                    className="input"
-                    value={config.notifications.alertCooldown}
-                    onChange={e => setConfig({...config, notifications: {...config.notifications, alertCooldown: parseInt(e.target.value) || 15}})}
-                  />
+                  <input type="number" min="1" max="1440" className="input" value={config.notifications.alertCooldown} onChange={e => setConfig({...config, notifications: {...config.notifications, alertCooldown: parseInt(e.target.value) || 15}})} />
                 </div>
                 <div>
                   <label className="label">Max Alerts per Scan</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="100"
-                    className="input"
-                    value={config.notifications.maxAlertsPerScan}
-                    onChange={e => setConfig({...config, notifications: {...config.notifications, maxAlertsPerScan: parseInt(e.target.value) || 20}})}
-                  />
+                  <input type="number" min="1" max="100" className="input" value={config.notifications.maxAlertsPerScan} onChange={e => setConfig({...config, notifications: {...config.notifications, maxAlertsPerScan: parseInt(e.target.value) || 20}})} />
                 </div>
                 <div>
                   <label className="label">Min Confidence %</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    className="input"
-                    value={config.notifications.minConfidence}
-                    onChange={e => setConfig({...config, notifications: {...config.notifications, minConfidence: parseInt(e.target.value) || 70}})}
-                  />
+                  <input type="number" min="0" max="100" className="input" value={config.notifications.minConfidence} onChange={e => setConfig({...config, notifications: {...config.notifications, minConfidence: parseInt(e.target.value) || 70}})} />
                 </div>
                 <div className="md:col-span-3">
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.notifications.includeCharts}
-                      onChange={e => setConfig({...config, notifications: {...config.notifications, includeCharts: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.notifications.includeCharts} onChange={e => setConfig({...config, notifications: {...config.notifications, includeCharts: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Include chart images with alerts</span>
                   </label>
                 </div>
                 <div className="md:col-span-3">
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.notifications.soundEnabled}
-                      onChange={e => setConfig({...config, notifications: {...config.notifications, soundEnabled: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.notifications.soundEnabled} onChange={e => setConfig({...config, notifications: {...config.notifications, soundEnabled: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Play sound for new alerts</span>
                   </label>
                 </div>
                 <div className="md:col-span-3">
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.notifications.onlyHighConfidence}
-                      onChange={e => setConfig({...config, notifications: {...config.notifications, onlyHighConfidence: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
-                    <span>Only notify for high confidence signals ({"{'>'}"} {config.notifications.minConfidence}%)</span>
+                    <input type="checkbox" checked={config.notifications.onlyHighConfidence} onChange={e => setConfig({...config, notifications: {...config.notifications, onlyHighConfidence: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span>Only notify for high confidence signals ({'>'} {config.notifications.minConfidence}%)</span>
+                  </label>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Clock size={20} /> Quiet Hours & Scheduling</h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="label">Quiet Hours Start</label>
+                  <input type="time" className="input" value={config.notifications.quietHoursStart} onChange={e => setConfig({...config, notifications: {...config.notifications, quietHoursStart: e.target.value}})} />
+                </div>
+                <div>
+                  <label className="label">Quiet Hours End</label>
+                  <input type="time" className="input" value={config.notifications.quietHoursEnd} onChange={e => setConfig({...config, notifications: {...config.notifications, quietHoursEnd: e.target.value}})} />
+                </div>
+                <div>
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.notifications.weekendNotifications} onChange={e => setConfig({...config, notifications: {...config.notifications, weekendNotifications: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span>Weekend Notifications</span>
                   </label>
                 </div>
               </div>
@@ -473,45 +682,21 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="label">Cache TTL (seconds)</label>
-                  <input
-                    type="number"
-                    min="60"
-                    max="3600"
-                    className="input"
-                    value={config.data.cacheTTL}
-                    onChange={e => setConfig({...config, data: {...config.data, cacheTTL: parseInt(e.target.value) || 300}})}
-                  />
+                  <input type="number" min="60" max="3600" className="input" value={config.data.cacheTTL} onChange={e => setConfig({...config, data: {...config.data, cacheTTL: parseInt(e.target.value) || 300}})} />
                 </div>
                 <div>
                   <label className="label">Max Symbols</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="200"
-                    className="input"
-                    value={config.data.maxSymbols}
-                    onChange={e => setConfig({...config, data: {...config.data, maxSymbols: parseInt(e.target.value) || 50}})}
-                  />
+                  <input type="number" min="1" max="200" className="input" value={config.data.maxSymbols} onChange={e => setConfig({...config, data: {...config.data, maxSymbols: parseInt(e.target.value) || 50}})} />
                 </div>
                 <div>
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.data.enableCache}
-                      onChange={e => setConfig({...config, data: {...config.data, enableCache: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.data.enableCache} onChange={e => setConfig({...config, data: {...config.data, enableCache: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Enable caching</span>
                   </label>
                 </div>
                 <div>
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.data.compressionEnabled}
-                      onChange={e => setConfig({...config, data: {...config.data, compressionEnabled: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.data.compressionEnabled} onChange={e => setConfig({...config, data: {...config.data, compressionEnabled: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Compress cached data</span>
                   </label>
                 </div>
@@ -522,14 +707,7 @@ export default function SettingsPage() {
                 {Object.entries(config.data.lookbackPeriods).map(([tf, val]) => (
                   <div key={tf}>
                     <label className="label">{tf} timeframe</label>
-                    <input
-                      type="number"
-                      min="10"
-                      max="2000"
-                      className="input"
-                      value={val}
-                      onChange={e => setConfig({...config, data: {...config.data, lookbackPeriods: {...config.data.lookbackPeriods, [tf]: parseInt(e.target.value) || val}}})}
-                    />
+                    <input type="number" min="10" max="2000" className="input" value={val} onChange={e => setConfig({...config, data: {...config.data, lookbackPeriods: {...config.data.lookbackPeriods, [tf]: parseInt(e.target.value) || val}}})} />
                   </div>
                 ))}
               </div>
@@ -538,15 +716,24 @@ export default function SettingsPage() {
               <div className="flex flex-wrap gap-2">
                 {['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'].map(tf => (
                   <label key={tf} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dark-600 bg-dark-800/50 hover:bg-dark-700/50 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={config.data.defaultTimeframes.includes(tf)}
-                      onChange={e => setConfig({...config, data: {...config.data, defaultTimeframes: e.target.checked ? [...config.data.defaultTimeframes, tf] : config.data.defaultTimeframes.filter(t => t !== tf)}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.data.defaultTimeframes.includes(tf)} onChange={e => setConfig({...config, data: {...config.data, defaultTimeframes: e.target.checked ? [...config.data.defaultTimeframes, tf] : config.data.defaultTimeframes.filter(t => t !== tf)}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span className="text-sm text-dark-300">{tf}</span>
                   </label>
                 ))}
+              </div>
+
+              <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Database size={20} /> Storage & Cleanup</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="label">Data Retention (days)</label>
+                  <input type="number" min="1" max="365" className="input" value={config.data.dataRetentionDays} onChange={e => setConfig({...config, data: {...config.data, dataRetentionDays: parseInt(e.target.value) || 90}})} />
+                </div>
+                <div>
+                  <label className="label flex items-center gap-2">
+                    <input type="checkbox" checked={config.data.autoCleanup} onChange={e => setConfig({...config, data: {...config.data, autoCleanup: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <span>Auto cleanup old data</span>
+                  </label>
+                </div>
               </div>
             </div>
           )}
@@ -557,22 +744,13 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.advanced.debugMode}
-                      onChange={e => setConfig({...config, advanced: {...config.advanced, debugMode: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.advanced.debugMode} onChange={e => setConfig({...config, advanced: {...config.advanced, debugMode: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Debug mode</span>
                   </label>
                 </div>
                 <div>
                   <label className="label">Log Level</label>
-                  <select
-                    className="input"
-                    value={config.advanced.logLevel}
-                    onChange={e => setConfig({...config, advanced: {...config.advanced, logLevel: e.target.value}})}
-                  >
+                  <select className="input" value={config.advanced.logLevel} onChange={e => setConfig({...config, advanced: {...config.advanced, logLevel: e.target.value}})}>
                     <option value="DEBUG">DEBUG</option>
                     <option value="INFO">INFO</option>
                     <option value="WARNING">WARNING</option>
@@ -581,12 +759,7 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.advanced.enableMetrics}
-                      onChange={e => setConfig({...config, advanced: {...config.advanced, enableMetrics: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.advanced.enableMetrics} onChange={e => setConfig({...config, advanced: {...config.advanced, enableMetrics: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Enable metrics collection</span>
                   </label>
                 </div>
@@ -596,23 +769,11 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="label">Custom Webhook URL</label>
-                  <input
-                    type="url"
-                    className="input"
-                    value={config.advanced.customWebhook}
-                    onChange={e => setConfig({...config, advanced: {...config.advanced, customWebhook: e.target.value}})}
-                    placeholder="https://your-server.com/webhook"
-                  />
+                  <input type="url" className="input" value={config.advanced.customWebhook} onChange={e => setConfig({...config, advanced: {...config.advanced, customWebhook: e.target.value}})} placeholder="https://your-server.com/webhook" />
                 </div>
                 <div>
                   <label className="label">Webhook Secret</label>
-                  <input
-                    type="password"
-                    className="input"
-                    value={config.advanced.webhookSecret}
-                    onChange={e => setConfig({...config, advanced: {...config.advanced, webhookSecret: e.target.value}})}
-                    placeholder="Secret for signature verification"
-                  />
+                  <input type="password" className="input" value={config.advanced.webhookSecret} onChange={e => setConfig({...config, advanced: {...config.advanced, webhookSecret: e.target.value}})} placeholder="Secret for signature verification" />
                 </div>
               </div>
 
@@ -620,23 +781,11 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="label">Rate Limit (req/min)</label>
-                  <input
-                    type="number"
-                    min="10"
-                    max="1000"
-                    className="input"
-                    value={config.advanced.rateLimit}
-                    onChange={e => setConfig({...config, advanced: {...config.advanced, rateLimit: parseInt(e.target.value) || 100}})}
-                  />
+                  <input type="number" min="10" max="1000" className="input" value={config.advanced.rateLimit} onChange={e => setConfig({...config, advanced: {...config.advanced, rateLimit: parseInt(e.target.value) || 100}})} />
                 </div>
                 <div>
                   <label className="label flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={config.advanced.corsEnabled}
-                      onChange={e => setConfig({...config, advanced: {...config.advanced, corsEnabled: e.target.checked}})}
-                      className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.advanced.corsEnabled} onChange={e => setConfig({...config, advanced: {...config.advanced, corsEnabled: e.target.checked}})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
                     <span>Enable CORS</span>
                   </label>
                 </div>

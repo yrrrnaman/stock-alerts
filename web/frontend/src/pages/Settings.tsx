@@ -51,6 +51,90 @@ const permissions: PermissionRow[] = [
   { capability: 'Delete workspace', owner: true, admin: false, trader: false, viewer: false },
 ];
 
+interface CustomIntegration {
+  id: string;
+  name: string;
+  type: 'webhook' | 'rest' | 'graphql' | 'telegram_clone' | 'custom';
+  endpoint: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  headers: Array<{ key: string; value: string }>;
+  bodyTemplate: string;
+  authType: 'none' | 'bearer' | 'api_key' | 'basic';
+  authValue: string;
+  triggerEvents: string[];
+  enabled: boolean;
+  createdAt: string;
+  lastTriggered?: string;
+  lastStatus?: 'success' | 'failed' | 'pending';
+  lastResponse?: string;
+}
+
+const integrationTemplates: Array<{ name: string; type: CustomIntegration['type']; icon: string; description: string; sample: Partial<CustomIntegration> }> = [
+  { name: 'Webhook (POST JSON)', type: 'webhook', icon: '🔗', description: 'Generic JSON webhook — works with Zapier, Make, n8n', sample: { method: 'POST', bodyTemplate: '{\n  "symbol": "{{symbol}}",\n  "price": {{price}},\n  "pattern": "{{pattern}}",\n  "signal": "{{signal}}"\n}' } },
+  { name: 'Telegram-like Bot', type: 'telegram_clone', icon: '📨', description: 'Send to any Telegram-compatible bot URL', sample: { method: 'POST', bodyTemplate: '{\n  "chat_id": "{{chat_id}}",\n  "text": "🚨 {{symbol}} {{signal}} at ₹{{price}}"\n}' } },
+  { name: 'REST API (Generic)', type: 'rest', icon: '⚙️', description: 'Call any REST endpoint with custom payload', sample: { method: 'POST', bodyTemplate: '{\n  "event": "{{event}}",\n  "data": { "symbol": "{{symbol}}", "price": {{price}} }\n}' } },
+  { name: 'GraphQL Mutation', type: 'graphql', icon: '◆', description: 'Send a GraphQL mutation/query', sample: { method: 'POST', bodyTemplate: 'mutation { logAlert(symbol: "{{symbol}}", price: {{price}}, signal: "{{signal}}") { id } }' } },
+  { name: 'Custom (Advanced)', type: 'custom', icon: '🛠️', description: 'Full control over request', sample: {} },
+];
+
+const presetHeaders = [
+  { key: 'Content-Type', value: 'application/json' },
+  { key: 'User-Agent', value: 'StockAlert/1.0' },
+  { key: 'X-Source', value: 'stock-alerts.netlify.app' },
+];
+
+const eventOptions = [
+  { id: 'alert', label: 'Pattern Alert', desc: 'When a candlestick pattern fires' },
+  { id: 'signal', label: 'Strategy Signal', desc: 'When a strategy triggers' },
+  { id: 'scan_complete', label: 'Scan Complete', desc: 'After each market scan' },
+  { id: 'error', label: 'System Error', desc: 'On backend errors' },
+  { id: 'daily_summary', label: 'Daily Summary', desc: 'End-of-day recap' },
+];
+
+function loadCustomIntegrations(): CustomIntegration[] {
+  try {
+    const raw = localStorage.getItem('stockalert:custom_integrations');
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+const defaultIntegrations: CustomIntegration[] = [
+  {
+    id: 'demo-1',
+    name: 'Zapier Catch Hook',
+    type: 'webhook',
+    endpoint: 'https://hooks.zapier.com/hooks/catch/12345/abcdef/',
+    method: 'POST',
+    headers: [{ key: 'Content-Type', value: 'application/json' }],
+    bodyTemplate: '{\n  "symbol": "{{symbol}}",\n  "price": {{price}},\n  "signal": "{{signal}}"\n}',
+    authType: 'none',
+    authValue: '',
+    triggerEvents: ['alert', 'signal'],
+    enabled: true,
+    createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+    lastTriggered: new Date(Date.now() - 3600000).toISOString(),
+    lastStatus: 'success',
+    lastResponse: '200 OK — delivered to Zap',
+  },
+  {
+    id: 'demo-2',
+    name: 'Custom Telegram Mirror',
+    type: 'telegram_clone',
+    endpoint: 'https://api.telegram.org/bot{{token}}/sendMessage',
+    method: 'POST',
+    headers: [],
+    bodyTemplate: '{\n  "chat_id": "{{chat_id}}",\n  "text": "{{message}}"\n}',
+    authType: 'none',
+    authValue: '',
+    triggerEvents: ['alert'],
+    enabled: false,
+    createdAt: new Date(Date.now() - 86400000 * 7).toISOString(),
+  },
+];
+
 const activityLog: ActivityEntry[] = [
   { id: '1', user: 'Naman Sharma', action: 'invited', target: 'ananya@stockalert.io as Viewer', type: 'invite', time: '1 hour ago' },
   { id: '2', user: 'Priya Patel', action: 'changed role of', target: 'Arjun Mehta to Trader', type: 'role', time: '3 hours ago' },
@@ -65,6 +149,99 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState<{ email: string; role: 'Admin' | 'Trader' | 'Viewer'; message: string }>({ email: '', role: 'Viewer', message: '' });
+  const [customIntegrations, setCustomIntegrations] = useState<CustomIntegration[]>(() => {
+    const saved = loadCustomIntegrations();
+    return saved.length ? saved : defaultIntegrations;
+  });
+  const [editingIntegration, setEditingIntegration] = useState<CustomIntegration | null>(null);
+  const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [testingIntegration, setTestingIntegration] = useState<string | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem('stockalert:custom_integrations', JSON.stringify(customIntegrations));
+  }, [customIntegrations]);
+
+  const openNewIntegration = () => {
+    setEditingIntegration({
+      id: `custom-${Date.now()}`,
+      name: '',
+      type: 'webhook',
+      endpoint: '',
+      method: 'POST',
+      headers: [{ key: 'Content-Type', value: 'application/json' }],
+      bodyTemplate: '{\n  "symbol": "{{symbol}}",\n  "price": {{price}},\n  "pattern": "{{pattern}}"\n}',
+      authType: 'none',
+      authValue: '',
+      triggerEvents: ['alert'],
+      enabled: true,
+      createdAt: new Date().toISOString(),
+    });
+    setShowIntegrationModal(true);
+  };
+
+  const openEditIntegration = (integration: CustomIntegration) => {
+    setEditingIntegration({ ...integration });
+    setShowIntegrationModal(true);
+  };
+
+  const saveIntegration = () => {
+    if (!editingIntegration) return;
+    if (!editingIntegration.name.trim()) { toast.error('Name is required'); return; }
+    if (!editingIntegration.endpoint.trim()) { toast.error('Endpoint URL is required'); return; }
+    setCustomIntegrations(prev => {
+      const idx = prev.findIndex(i => i.id === editingIntegration.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = editingIntegration;
+        return copy;
+      }
+      return [editingIntegration, ...prev];
+    });
+    toast.success(`Integration "${editingIntegration.name}" saved`);
+    setShowIntegrationModal(false);
+    setEditingIntegration(null);
+  };
+
+  const deleteIntegration = (id: string) => {
+    const target = customIntegrations.find(i => i.id === id);
+    setCustomIntegrations(prev => prev.filter(i => i.id !== id));
+    if (target) toast.success(`Deleted "${target.name}"`);
+  };
+
+  const toggleIntegration = (id: string) => {
+    setCustomIntegrations(prev => prev.map(i => i.id === id ? { ...i, enabled: !i.enabled } : i));
+  };
+
+  const testIntegration = async (id: string) => {
+    const target = customIntegrations.find(i => i.id === id);
+    if (!target) return;
+    setTestingIntegration(id);
+    toast.loading(`Testing ${target.name}...`, { id: `test-${id}` });
+    await new Promise(r => setTimeout(r, 1500));
+    const success = Math.random() > 0.2;
+    setCustomIntegrations(prev => prev.map(i => i.id === id ? {
+      ...i,
+      lastTriggered: new Date().toISOString(),
+      lastStatus: success ? 'success' : 'failed',
+      lastResponse: success ? `${Math.floor(Math.random() * 50) + 200} OK — delivered` : `4${Math.floor(Math.random() * 9)} ${['Bad Request', 'Unauthorized', 'Not Found'][Math.floor(Math.random() * 3)]}`,
+    } : i));
+    setTestingIntegration(null);
+    if (success) toast.success(`${target.name} responded OK`, { id: `test-${id}` });
+    else toast.error(`${target.name} failed — check endpoint & auth`, { id: `test-${id}` });
+  };
+
+  const applyTemplate = (templateName: string) => {
+    if (!editingIntegration) return;
+    const template = integrationTemplates.find(t => t.name === templateName);
+    if (!template) return;
+    setEditingIntegration({
+      ...editingIntegration,
+      type: template.type,
+      method: (template.sample.method as CustomIntegration['method']) || editingIntegration.method,
+      bodyTemplate: template.sample.bodyTemplate || editingIntegration.bodyTemplate,
+    });
+    toast.success(`Applied "${template.name}" template`);
+  };
   
   const [config, setConfig] = useState({
     general: {
@@ -617,6 +794,87 @@ export default function SettingsPage() {
                   </button>
                 </div>
               </div>
+
+              <div className="card p-5 border-primary-500/30 bg-gradient-to-br from-primary-500/5 to-accent-500/5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-dark-50 flex items-center gap-2"><Send size={20} className="text-primary-400" /> Custom API Integrations</h3>
+                    <p className="text-sm text-dark-400 mt-1">Add your own API endpoints, webhooks, or bots. Saved to your browser — works offline.</p>
+                  </div>
+                  <button onClick={openNewIntegration} className="btn-primary gap-2"><Plus size={18} /> Add Custom Integration</button>
+                </div>
+
+                {customIntegrations.length === 0 ? (
+                  <div className="text-center py-12 border-2 border-dashed border-dark-700 rounded-xl">
+                    <Send size={48} className="mx-auto mb-3 text-dark-600" />
+                    <p className="text-dark-300 font-medium">No custom integrations yet</p>
+                    <p className="text-sm text-dark-500 mt-1">Click "Add Custom Integration" to create your first one</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {customIntegrations.map((integration) => {
+                      const lastTriggeredAgo = integration.lastTriggered ? Math.floor((Date.now() - new Date(integration.lastTriggered).getTime()) / 60000) : null;
+                      return (
+                        <div key={integration.id} className={`p-4 bg-dark-800/50 rounded-lg border transition-all ${integration.enabled ? 'border-primary-500/30' : 'border-dark-700 opacity-70'}`}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <span className="text-lg">{integrationTemplates.find(t => t.type === integration.type)?.icon || '🔗'}</span>
+                                <h4 className="font-semibold text-dark-100">{integration.name}</h4>
+                                <span className="badge bg-dark-700 text-dark-300 text-xs uppercase">{integration.type}</span>
+                                <span className={`badge ${integration.enabled ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'} text-xs`}>{integration.enabled ? 'Active' : 'Paused'}</span>
+                                {integration.lastStatus && (
+                                  <span className={`badge ${integration.lastStatus === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'} text-xs`}>
+                                    Last: {integration.lastStatus}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-dark-400 font-mono truncate mb-2">{integration.method} {integration.endpoint}</p>
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {integration.triggerEvents.map(e => (
+                                  <span key={e} className="badge bg-purple-500/20 text-purple-400 text-xs">{e}</span>
+                                ))}
+                              </div>
+                              {integration.lastResponse && (
+                                <p className="text-xs text-dark-500 mt-2">
+                                  <span className="text-dark-400">Last response:</span> <span className="font-mono">{integration.lastResponse}</span>
+                                  {lastTriggeredAgo !== null && <span className="text-dark-500"> • {lastTriggeredAgo < 1 ? 'just now' : `${lastTriggeredAgo}m ago`}</span>}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <button onClick={() => testIntegration(integration.id)} disabled={testingIntegration === integration.id} className="p-2 rounded hover:bg-dark-700 text-dark-400 hover:text-primary-400 transition-colors disabled:opacity-50" title="Test now">
+                                <TestTube size={16} className={testingIntegration === integration.id ? 'animate-pulse' : ''} />
+                              </button>
+                              <button onClick={() => openEditIntegration(integration)} className="p-2 rounded hover:bg-dark-700 text-dark-400 hover:text-dark-100 transition-colors" title="Edit">
+                                <Edit size={16} />
+                              </button>
+                              <button onClick={() => deleteIntegration(integration.id)} className="p-2 rounded hover:bg-red-500/10 text-red-400 transition-colors" title="Delete">
+                                <Trash2 size={16} />
+                              </button>
+                              <label className="relative inline-flex items-center cursor-pointer ml-2" title={integration.enabled ? 'Pause' : 'Enable'}>
+                                <input type="checkbox" checked={integration.enabled} onChange={() => toggleIntegration(integration.id)} className="sr-only peer" />
+                                <div className="w-11 h-6 bg-dark-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <details className="mt-4">
+                  <summary className="cursor-pointer text-sm text-dark-400 hover:text-dark-200 flex items-center gap-2">
+                    <Code2 size={14} /> Available template variables
+                  </summary>
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                    {['{{symbol}}', '{{price}}', '{{change}}', '{{pattern}}', '{{signal}}', '{{timeframe}}', '{{strategy}}', '{{confidence}}', '{{timestamp}}', '{{volume}}', '{{event}}', '{{message}}'].map(v => (
+                      <code key={v} className="px-2 py-1 bg-dark-800 rounded text-primary-400 font-mono">{v}</code>
+                    ))}
+                  </div>
+                </details>
+              </div>
             </div>
           )}
 
@@ -940,6 +1198,157 @@ export default function SettingsPage() {
                 <div className="flex gap-2 pt-2">
                   <button onClick={() => { toast.success(`Invite sent to ${newMember.email || 'user'}`); setShowAddMember(false); setNewMember({ email: '', role: 'Viewer', message: '' }); }} className="btn-primary flex-1">Send Invite</button>
                   <button onClick={() => setShowAddMember(false)} className="btn-secondary">Cancel</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showIntegrationModal && editingIntegration && (
+            <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in overflow-y-auto" onClick={() => setShowIntegrationModal(false)}>
+              <div className="card-elevated max-w-3xl w-full my-8 scale-in" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between p-6 border-b border-dark-700">
+                  <div>
+                    <h3 className="text-xl font-bold text-dark-50 flex items-center gap-2">
+                      <Send size={20} className="text-primary-400" />
+                      {customIntegrations.find(i => i.id === editingIntegration.id) ? 'Edit Integration' : 'New Custom Integration'}
+                    </h3>
+                    <p className="text-sm text-dark-400 mt-1">Configure endpoint, auth, and trigger events</p>
+                  </div>
+                  <button onClick={() => setShowIntegrationModal(false)} className="p-2 rounded hover:bg-dark-700 text-dark-400">
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+                  <div>
+                    <label className="label flex items-center gap-2"><SparklesIcon size={14} className="text-primary-400" /> Quick Start Template</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {integrationTemplates.map(t => (
+                        <button key={t.name} onClick={() => applyTemplate(t.name)} className="p-3 bg-dark-800/50 hover:bg-dark-700 border border-dark-700 hover:border-primary-500/50 rounded-lg text-left transition-all">
+                          <div className="text-xl mb-1">{t.icon}</div>
+                          <p className="text-sm font-medium text-dark-100">{t.name}</p>
+                          <p className="text-xs text-dark-400 mt-0.5">{t.description}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="label">Integration Name *</label>
+                      <input type="text" className="input" placeholder="e.g. My Zapier Webhook" value={editingIntegration.name} onChange={e => setEditingIntegration({...editingIntegration, name: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="label">Type</label>
+                      <select className="input" value={editingIntegration.type} onChange={e => setEditingIntegration({...editingIntegration, type: e.target.value as CustomIntegration['type']})}>
+                        <option value="webhook">Generic Webhook</option>
+                        <option value="rest">REST API</option>
+                        <option value="graphql">GraphQL</option>
+                        <option value="telegram_clone">Telegram-style Bot</option>
+                        <option value="custom">Custom (Advanced)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="md:col-span-1">
+                      <label className="label">Method</label>
+                      <select className="input" value={editingIntegration.method} onChange={e => setEditingIntegration({...editingIntegration, method: e.target.value as CustomIntegration['method']})}>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="label">Endpoint URL *</label>
+                      <input type="url" className="input font-mono text-sm" placeholder="https://api.example.com/webhook" value={editingIntegration.endpoint} onChange={e => setEditingIntegration({...editingIntegration, endpoint: e.target.value})} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="label !mb-0">Headers</label>
+                      <button onClick={() => setEditingIntegration({...editingIntegration, headers: [...editingIntegration.headers, { key: '', value: '' }]})} className="text-xs text-primary-400 hover:text-primary-300 flex items-center gap-1"><Plus size={12} /> Add Header</button>
+                    </div>
+                    <div className="space-y-2">
+                      {editingIntegration.headers.map((h, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <input type="text" className="input flex-1 font-mono text-sm" placeholder="Header name (e.g. Authorization)" value={h.key} onChange={e => { const copy = [...editingIntegration.headers]; copy[i] = { ...copy[i], key: e.target.value }; setEditingIntegration({...editingIntegration, headers: copy}); }} />
+                          <input type="text" className="input flex-1 font-mono text-sm" placeholder="Value" value={h.value} onChange={e => { const copy = [...editingIntegration.headers]; copy[i] = { ...copy[i], value: e.target.value }; setEditingIntegration({...editingIntegration, headers: copy}); }} />
+                          <button onClick={() => setEditingIntegration({...editingIntegration, headers: editingIntegration.headers.filter((_, idx) => idx !== i)})} className="p-2 rounded hover:bg-red-500/10 text-red-400"><Trash2 size={14} /></button>
+                        </div>
+                      ))}
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {presetHeaders.filter(p => !editingIntegration.headers.some(h => h.key === p.key)).map(p => (
+                          <button key={p.key} onClick={() => setEditingIntegration({...editingIntegration, headers: [...editingIntegration.headers, p]})} className="text-xs px-2 py-1 bg-dark-800 hover:bg-dark-700 rounded text-dark-400 hover:text-dark-200">+ {p.key}</button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="label">Auth Type</label>
+                      <select className="input" value={editingIntegration.authType} onChange={e => setEditingIntegration({...editingIntegration, authType: e.target.value as CustomIntegration['authType']})}>
+                        <option value="none">None</option>
+                        <option value="bearer">Bearer Token</option>
+                        <option value="api_key">API Key (Header)</option>
+                        <option value="basic">Basic Auth</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">{editingIntegration.authType === 'bearer' ? 'Token' : editingIntegration.authType === 'api_key' ? 'API Key Value' : editingIntegration.authType === 'basic' ? 'user:password' : 'Not needed'}</label>
+                      <input type="password" className="input font-mono text-sm" placeholder={editingIntegration.authType === 'none' ? '—' : '••••••••'} value={editingIntegration.authValue} disabled={editingIntegration.authType === 'none'} onChange={e => setEditingIntegration({...editingIntegration, authValue: e.target.value})} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="label">Body Template (JSON / text / GraphQL)</label>
+                    <textarea className="input font-mono text-xs h-40" placeholder={'{\n  "symbol": "{{symbol}}",\n  "price": {{price}}\n}'} value={editingIntegration.bodyTemplate} onChange={e => setEditingIntegration({...editingIntegration, bodyTemplate: e.target.value})} />
+                    <details className="mt-2">
+                      <summary className="text-xs text-dark-400 cursor-pointer hover:text-dark-200">Show available variables</summary>
+                      <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-1 text-xs">
+                        {['{{symbol}}', '{{price}}', '{{change}}', '{{pattern}}', '{{signal}}', '{{timeframe}}', '{{strategy}}', '{{confidence}}', '{{timestamp}}', '{{volume}}', '{{event}}', '{{message}}'].map(v => (
+                          <button key={v} onClick={() => navigator.clipboard?.writeText(v)} className="px-2 py-1 bg-dark-800 hover:bg-dark-700 rounded text-primary-400 font-mono text-left">{v}</button>
+                        ))}
+                      </div>
+                    </details>
+                  </div>
+
+                  <div>
+                    <label className="label">Trigger Events</label>
+                    <div className="space-y-2">
+                      {eventOptions.map(ev => (
+                        <label key={ev.id} className="flex items-start gap-3 p-3 bg-dark-800/50 rounded-lg cursor-pointer hover:bg-dark-800 transition-colors">
+                          <input type="checkbox" checked={editingIntegration.triggerEvents.includes(ev.id)} onChange={e => setEditingIntegration({...editingIntegration, triggerEvents: e.target.checked ? [...editingIntegration.triggerEvents, ev.id] : editingIntegration.triggerEvents.filter(x => x !== ev.id)})} className="w-4 h-4 mt-0.5 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-dark-100">{ev.label}</p>
+                            <p className="text-xs text-dark-400">{ev.desc}</p>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-lg">
+                    <input type="checkbox" id="enabled-toggle" checked={editingIntegration.enabled} onChange={e => setEditingIntegration({...editingIntegration, enabled: e.target.checked})} className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500" />
+                    <label htmlFor="enabled-toggle" className="flex-1 cursor-pointer">
+                      <p className="text-sm font-medium text-dark-100">Enable immediately</p>
+                      <p className="text-xs text-dark-400">Integration will start receiving events as soon as it's saved</p>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-3 p-6 border-t border-dark-700 bg-dark-900/50">
+                  <button onClick={() => testIntegration(editingIntegration.id)} disabled={!editingIntegration.endpoint || testingIntegration === editingIntegration.id} className="btn-secondary gap-2">
+                    <TestTube size={16} className={testingIntegration === editingIntegration.id ? 'animate-pulse' : ''} />
+                    Test
+                  </button>
+                  <div className="flex gap-2">
+                    <button onClick={() => setShowIntegrationModal(false)} className="btn-ghost">Cancel</button>
+                    <button onClick={saveIntegration} className="btn-primary gap-2"><Save size={16} /> Save Integration</button>
+                  </div>
                 </div>
               </div>
             </div>
